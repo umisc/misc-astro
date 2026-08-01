@@ -81,7 +81,7 @@ const guides = (await getCollection('ctf')).sort(
         {
           guides.map(({ id, data }) => (
             <CategoryCard
-              href={`/ctf/${id}`}
+              href={`/ctf/${id}/`}
               title={data.title}
               description={data.description}
               tags={data.tags}

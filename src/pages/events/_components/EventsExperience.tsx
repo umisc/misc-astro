@@ -88,7 +88,7 @@ function EventsContent({ events }: Props) {
           density="compact"
           effect="pixel-shimmer"
           key={item.id}
-          href={`/events?view=${view}&event=${encodeURIComponent(item.id)}`}
+          href={`/events/?view=${view}&event=${encodeURIComponent(item.id)}`}
           aria-labelledby={`event-card-title-${item.id}`}
           onClick={(click) => {
             if (

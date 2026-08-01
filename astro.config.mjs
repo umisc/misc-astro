@@ -10,6 +10,13 @@ import vercel from '@astrojs/vercel';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.umisc.club',
+  trailingSlash: 'always',
+  redirects: {
+    '/home': {
+      destination: '/',
+      status: 308,
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
