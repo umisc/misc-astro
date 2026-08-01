@@ -1,0 +1,49 @@
+---
+import type { Icon } from '@phosphor-icons/react';
+import DecryptedText from '@/components/typography/DecryptedText';
+import MetallicIcon from '@/components/typography/MetallicIcon';
+import { metallicTextClassName } from '@/components/typography/MetallicText';
+import { PageTitle } from '@/components/typography/Typography';
+
+type Props = {
+  title: string;
+  icon?: Icon;
+  titleId?: string;
+  class?: string;
+};
+
+const { title, icon, titleId, class: className = '' } = Astro.props as Props;
+---
+
+<header
+  class={`flex flex-col items-center gap-content text-center ${className}`}
+>
+  {
+    icon && (
+      <div class="flex justify-center" aria-hidden="true">
+        <MetallicIcon icon={icon} size={60} />
+      </div>
+    )
+  }
+  <div class="flex flex-col items-center gap-cluster">
+    <PageTitle id={titleId}>
+      <DecryptedText
+        client:load
+        text={title}
+        className={metallicTextClassName}
+        speed={30}
+        maxIterations={20}
+        revealDirection="start"
+        sequential
+        animateOn="view"
+      />
+    </PageTitle>
+    {
+      Astro.slots.has('default') && (
+        <div class="mx-auto max-w-3xl text-center text-base leading-7 text-muted-foreground sm:text-lg">
+          <slot />
+        </div>
+      )
+    }
+  </div>
+</header>

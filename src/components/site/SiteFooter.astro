@@ -1,0 +1,63 @@
+---
+import {
+  DiscordLogoIcon,
+  FacebookLogoIcon,
+  InstagramLogoIcon,
+  LinkedinLogoIcon,
+  LinkIcon,
+} from '@phosphor-icons/react/ssr';
+import Container from './Container.astro';
+
+const socials = [
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/uomisc/',
+    Icon: FacebookLogoIcon,
+  },
+  {
+    label: 'Instagram',
+    href: 'https://instagram.com/unimelb_misc',
+    Icon: InstagramLogoIcon,
+  },
+  {
+    label: 'Discord',
+    href: 'https://discord.gg/PybR9kpBMn',
+    Icon: DiscordLogoIcon,
+  },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/company/melbourne-information-security-club/',
+    Icon: LinkedinLogoIcon,
+  },
+  {
+    label: 'Link tree',
+    href: 'https://beacons.ai/uom_misc',
+    Icon: LinkIcon,
+  },
+];
+---
+
+<footer
+  class="relative z-10 bg-linear-to-b from-transparent to-canvas pb-page-block"
+>
+  <Container>
+    <ul class="flex justify-center gap-cluster" aria-label="Social links">
+      {
+        socials.map(({ label, href, Icon }) => (
+          <li>
+            <a
+              class="inline-flex size-12 items-center justify-center rounded-full transition outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+            >
+              <Icon weight="bold" size={30} aria-hidden="true" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</footer>

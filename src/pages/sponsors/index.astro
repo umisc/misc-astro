@@ -1,0 +1,46 @@
+---
+import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SponsorsSection from './_components/SponsorsSection.astro';
+import Container from '@/components/site/Container.astro';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import type { Sponsor } from './_lib/types';
+import { HandshakeIcon } from '@phosphor-icons/react/ssr';
+
+const sponsors = (
+  await Promise.all(
+    (await getCollection('sponsors')).map(async ({ data }) => {
+      const scale = Math.min(1, 640 / data.logo.width, 192 / data.logo.height);
+      const width = Math.round(data.logo.width * scale);
+      const height = Math.round(data.logo.height * scale);
+      const logo = await getImage({
+        src: data.logo,
+        width,
+        height,
+        fit: 'inside',
+        format: 'webp',
+      });
+
+      return {
+        ...data,
+        logo: {
+          src: logo.src,
+          width,
+          height,
+        },
+      } satisfies Sponsor;
+    }),
+  )
+).sort((a, b) => a.order - b.order);
+---
+
+<BaseLayout title="Sponsors — MISC">
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead breadcrumbs={[{ label: 'Sponsors' }]}>
+      <PageIntro title="Meet Our Sponsors" icon={HandshakeIcon} />
+    </PageMasthead>
+    <SponsorsSection sponsors={sponsors} />
+  </Container>
+</BaseLayout>

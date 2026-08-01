@@ -1,0 +1,45 @@
+---
+import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import AboutExperience from './_components/AboutExperience';
+import Container from '@/components/site/Container.astro';
+import { UsersIcon } from '@phosphor-icons/react/ssr';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+
+const teamMembers = (
+  await Promise.all(
+    (await getCollection('team')).map(async ({ id, data }) => {
+      if (!data.image) return { id, ...data };
+
+      const image = await getImage({
+        src: data.image,
+        width: 320,
+        height: 320,
+        fit: 'cover',
+        format: 'webp',
+      });
+
+      return {
+        id,
+        ...data,
+        image: {
+          src: image.src,
+          width: image.attributes.width,
+          height: image.attributes.height,
+        },
+      };
+    }),
+  )
+).sort((a, b) => a.order - b.order);
+---
+
+<BaseLayout title="About — MISC">
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead breadcrumbs={[{ label: 'About' }]}>
+      <PageIntro title="Meet Our Team" icon={UsersIcon} />
+    </PageMasthead>
+    <AboutExperience members={teamMembers} client:load />
+  </Container>
+</BaseLayout>

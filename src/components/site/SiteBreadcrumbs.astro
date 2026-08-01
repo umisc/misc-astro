@@ -1,0 +1,69 @@
+---
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+
+import { cn } from '@/lib/utils';
+
+export type BreadcrumbLinkEntry = {
+  label: string;
+  href: string;
+};
+
+export type BreadcrumbPageEntry = {
+  label: string;
+  href?: never;
+};
+
+export type BreadcrumbTrail = readonly [
+  ...BreadcrumbLinkEntry[],
+  BreadcrumbPageEntry,
+];
+
+type Props = {
+  breadcrumbs: BreadcrumbTrail;
+  class: string;
+};
+
+const { class: className, breadcrumbs } = Astro.props as Props;
+const linkedItems = [
+  { label: 'Home', href: '/' },
+  ...breadcrumbs.slice(0, -1),
+] as BreadcrumbLinkEntry[];
+const currentPage = breadcrumbs[breadcrumbs.length - 1];
+if (!currentPage) {
+  throw new Error(
+    'SiteBreadcrumbs requires at least one breadcrumb for the current page.',
+  );
+}
+---
+
+<Breadcrumb className={cn('pl-1', className)}>
+  <BreadcrumbList className="gap-1.5">
+    {
+      linkedItems.map((item) => (
+        <>
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              href={item.href}
+              className="rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
+            >
+              {item.label}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className="text-muted-foreground" />
+        </>
+      ))
+    }
+    <BreadcrumbItem className="min-w-0">
+      <BreadcrumbPage className="wrap-break-word text-primary">
+        {currentPage.label}
+      </BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>

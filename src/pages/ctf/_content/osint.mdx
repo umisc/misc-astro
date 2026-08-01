@@ -1,0 +1,100 @@
+---
+title: OSINT
+description: Open Source Intelligence, gathering information from publicly available sources to solve challenges. Involves search engines, social media, geolocation, and metadata analysis.
+tags:
+  - Google Dorking
+  - Geolocation
+  - Metadata
+  - Shodan
+  - Social Media
+order: 6
+---
+
+import { Image } from 'astro:assets';
+import geolocationImage from '../_assets/osint-geolocation.webp';
+import ResourceCard from '../_components/content/ResourceCard.astro';
+import ResourceGrid from '../_components/content/ResourceGrid.astro';
+import { Accordion, AccordionItem } from '@/components/ui/accordion';
+
+## What is OSINT?
+
+Open-Source Intelligence (OSINT) is, very simply put, just collecting and
+analyzing data from public sources.
+
+In the context of Capture The Flag (CTF) competitions, it is like being a
+digital detective. You only have crumbs of information and must use that to find
+a hidden flag. It often manifests itself in finding the origin of a picture. For
+example, something like, in what town does this cat reside in?
+
+<figure>
+  <Image
+    src={geolocationImage}
+    alt="A cat sitting outdoors, used as an example geolocation challenge"
+    width={700}
+    loading="lazy"
+  />
+  <figcaption>Image credit: Bellingcat Open Source Challenge</figcaption>
+</figure>
+
+## Beginner's Guide to OSINT
+
+Getting started with OSINT is more about developing a curious mindset than
+mastering complex tools. Here are some essential tips to help you get started:
+
+<Accordion>
+  <AccordionItem title="Google Dorking">
+    Use advanced search operators to filter search engine results. For example,
+    using <code>site:example.com filetype:pdf</code> will restrict your search
+    strictly to PDF files hosted on example.com.
+  </AccordionItem>
+  <AccordionItem title="Reverse Image Searching">
+    Tools like Google Images, Yandex, or TinEye can help you determine where an
+    image has appeared online previously, or identify specific landmarks,
+    objects, and text within the image.
+  </AccordionItem>
+  <AccordionItem title="Username Checking">
+    Cross-referencing usernames across multiple platforms (e.g., using tools
+    like Sherlock or Namechk) can build a comprehensive profile of a target and
+    uncover hidden connections.
+  </AccordionItem>
+  <AccordionItem title="Metadata Analysis">
+    Files often contain hidden information (metadata) such as GPS coordinates in
+    photographs, author names, or creation dates in documents. Use online tools
+    or command-line programs to extract this hidden data.
+  </AccordionItem>
+</Accordion>
+
+## Resources & Tools
+
+<ResourceGrid>
+  <ResourceCard
+    href="https://www.osintframework.com/"
+    title="OSINT Framework"
+    description="A massive collection of OSINT tools categorized by their specific use case."
+  />
+  <ResourceCard
+    href="https://www.exploit-db.com/google-hacking-database"
+    title="Google Hacking Database"
+    description="An extensive archive of Google Dorks that can reveal sensitive information."
+  />
+  <ResourceCard
+    href="https://github.com/sherlock-project/sherlock"
+    title="Sherlock"
+    description="A command-line tool to hunt down social media accounts by username across a vast number of networks."
+  />
+  <ResourceCard
+    href="https://namechk.com/"
+    title="Namechk"
+    description="An online tool to check the availability of a username across dozens of social networks."
+  />
+  <ResourceCard
+    href="https://yandex.com/images/"
+    title="Yandex Reverse Image Search"
+    description="A powerful reverse image search engine, often considered one of the best for finding image origins."
+  />
+  <ResourceCard
+    href="https://tineye.com/"
+    title="TinEye"
+    description="A popular reverse image search engine that tracks where and how an image has appeared online."
+  />
+</ResourceGrid>

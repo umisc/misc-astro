@@ -1,0 +1,75 @@
+---
+title: Reverse Engineering
+description: Analysing compiled binaries to understand their behaviour. Involves disassemblers, decompilers, and understanding assembly code.
+tags:
+  - x86 ASM
+  - Ghidra
+  - IDA Pro
+  - GDB
+  - ELF
+  - APK
+order: 3
+---
+
+import ResourceCard from '../_components/content/ResourceCard.astro';
+import ResourceGrid from '../_components/content/ResourceGrid.astro';
+import { Accordion, AccordionItem } from '@/components/ui/accordion';
+
+## What is Reverse Engineering?
+
+Reverse engineering is the process of taking a compiled program and figuring
+out how it works without having access to its original source code. This usually
+involves looking at its functions, strings, assembly instructions, and general
+behaviour.
+
+In CTFs, you might be given a program that checks for a secret password, changes
+your input in some unknown way, or hides a flag somewhere in its logic. Your
+goal is to understand what the program is doing and work out how to get the
+result you want.
+
+## How Does Reverse Engineering Work?
+
+There are two main ways to analyse a program. Static analysis means looking at
+the program without running it. Tools such as Ghidra can turn machine code into
+more readable pseudocode, which helps you understand functions and follow the
+program's logic.
+
+Dynamic analysis means running the program and watching what happens. A debugger
+such as GDB lets you pause the program, step through its instructions, and
+inspect values while it is running. In practice, you will often move between
+both approaches while solving a challenge.
+
+<Accordion>
+  <AccordionItem title="Start with the Basics">
+    When you first receive a binary, start by running it and seeing how it
+    behaves. Simple commands such as <code>file</code> and <code>strings</code>{' '}
+    can also give you useful information before you open it in a larger tool.
+  </AccordionItem>
+  <AccordionItem title="Use a Decompiler">
+    Try opening the program in Ghidra and following its main functions. Look for
+    code related to user input, comparisons, or interesting strings. If
+    something is still unclear, you can use a debugger to see what the program
+    is doing while it runs.
+  </AccordionItem>
+  <AccordionItem title="Don't Sweat the Assembly">
+    You do not need to know assembly before starting. Being able to recognise
+    basic ideas such as functions, loops, conditions, and comparisons is enough
+    for many beginner challenges. You can learn more assembly as you move on to
+    harder problems.
+  </AccordionItem>
+</Accordion>
+
+## Where to Learn and Practise
+
+<ResourceGrid>
+  <ResourceCard
+    href="https://ghidra.re/ghidra_docs/GhidraClass/Beginner/Introduction_to_Ghidra_Student_Guide.html"
+    title="Ghidra Beginner Guide"
+    description="An introduction to the basic workflow for opening, navigating, and analysing programs in Ghidra."
+  />
+  <ResourceCard
+    href="https://pwn.college/program-security/reverse-engineering/"
+    title="pwn.college Reverse Engineering"
+    description="Hands-on challenges for practising program analysis and working out hidden logic."
+  />
+</ResourceGrid>

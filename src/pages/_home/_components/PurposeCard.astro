@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { Card, CardContent } from '@/components/ui/card';
+
+interface Props {
+  title: string;
+  description: string;
+  image: ImageMetadata;
+}
+
+const { title, description, image } = Astro.props;
+---
+
+<Card as="article" variant="glass" density="spacious">
+  <CardContent
+    density="spacious"
+    className="flex flex-col items-center gap-content pt-card-spacious text-center"
+  >
+    <div class="grid size-12 place-items-center rounded-lg text-xl">
+      <Image src={image} alt="" width={80} class="size-10 object-contain" />
+    </div>
+    <h3 class="font-display text-xl font-bold">{title}</h3>
+    <p class="text-sm leading-6 text-muted-foreground">{description}</p>
+  </CardContent>
+</Card>

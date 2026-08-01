@@ -1,0 +1,124 @@
+---
+import growthImage from './_home/_assets/growth.png';
+import collaborationImage from './_home/_assets/collaboration.png';
+import innovationImage from './_home/_assets/innovation.png';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/site/Container.astro';
+import { SectionTitle } from '@/components/typography/Typography';
+import MiscHeadExperience from './_home/_components/MiscHeadExperience.astro';
+import DecryptedText from '@/components/typography/DecryptedText';
+import { metallicTextClassName } from '@/components/typography/MetallicText';
+import PopInText from '@/components/typography/PopInText';
+import GradientText from '@/components/typography/GradientText';
+import HomeStats from './_home/_components/HomeStats';
+import PurposeCard from './_home/_components/PurposeCard.astro';
+import { YouTube } from 'astro-embed';
+---
+
+<BaseLayout>
+  <Container class="flex max-w-screen-2xl flex-col gap-page-section">
+    <section class="flex flex-col gap-content" aria-labelledby="home-title">
+      <div
+        class="flex flex-col items-center gap-section-content lg:min-h-[60svh] lg:flex-row"
+      >
+        <div
+          class="order-2 flex flex-col items-center gap-content text-center lg:order-1 lg:min-w-0 lg:flex-1 lg:items-start lg:text-left"
+        >
+          <h1
+            id="home-title"
+            class="text-shadow font-display text-7xl font-extrabold tracking-tight sm:text-8xl lg:text-[clamp(4.5rem,8vw,10rem)]"
+          >
+            <DecryptedText
+              client:load
+              className={metallicTextClassName}
+              text="MISC"
+              speed={30}
+              maxIterations={20}
+              revealDirection="start"
+              sequential
+              animateOn="view"
+            />
+          </h1>
+          <p
+            class="font-display text-3xl leading-tight font-semibold text-foreground sm:text-5xl lg:text-[clamp(2.25rem,3.5vw,3rem)]"
+          >
+            <DecryptedText
+              client:load
+              className={metallicTextClassName}
+              text="Melbourne Information Security Club"
+              speed={30}
+              maxIterations={20}
+              revealDirection="start"
+              sequential
+              animateOn="view"
+            />
+          </p>
+          <p class="text-base leading-7 text-muted-foreground lg:text-lg">
+            Established in 2017, The University of Melbourne Information
+            Security Club (MISC) provides an inclusive community of like-minded
+            students, who are either working towards a career in cybersecurity
+            or just looking to broaden their skillset.
+          </p>
+        </div>
+        <MiscHeadExperience />
+      </div>
+    </section>
+
+    <p
+      class="text-center font-display text-2xl font-semibold sm:text-4xl lg:text-[clamp(2rem,3vw,4rem)]"
+    >
+      <GradientText client:load>SECURE. PROTECT. INFILTRATE</GradientText>
+    </p>
+
+    <section
+      class="flex flex-col gap-section-content"
+      aria-labelledby="purpose-title"
+    >
+      <SectionTitle id="purpose-title" className="text-center">
+        <PopInText client:visible text="Why We Do What We Do" />
+      </SectionTitle>
+      <div class="grid gap-content md:grid-cols-3">
+        <PurposeCard
+          title="Growth"
+          description="To legally and ethically improve offensive security skills in a practical manner."
+          image={growthImage}
+        />
+        <PurposeCard
+          title="Collaboration"
+          description="To provide a platform where members can work together on cybersecurity challenges and projects."
+          image={collaborationImage}
+        />
+        <PurposeCard
+          title="Innovation"
+          description="To encourage creative problem-solving and staying ahead of the latest security threats."
+          image={innovationImage}
+        />
+      </div>
+    </section>
+
+    <HomeStats
+      client:visible
+      members={381}
+      followers={2287}
+      eventsHeldThisYear={11}
+    />
+
+    <section
+      class="flex flex-col gap-section-content text-center"
+      aria-labelledby="video-title"
+    >
+      <SectionTitle id="video-title">Watch Our Intro</SectionTitle>
+      <div
+        class="mx-auto aspect-video w-full overflow-hidden rounded-2xl border border-border bg-background/30 shadow-2xl"
+      >
+        <YouTube
+          posterQuality="high"
+          id="TB1G6hBtVxU"
+          title="MISC Intro Video"
+          playlabel="Play MISC Intro Video"
+          style="max-width: none !important;"
+        />
+      </div>
+    </section>
+  </Container>
+</BaseLayout>

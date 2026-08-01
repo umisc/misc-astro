@@ -1,0 +1,97 @@
+---
+title: Forensics
+description: Recovering hidden or deleted data from files, memory dumps, and network captures. Tools like Wireshark, Volatility, and steganography utilities are common.
+tags:
+  - Wireshark
+  - Steganography
+  - Memory Forensics
+  - PCAP
+  - Exiftool
+order: 5
+---
+
+import { Image } from 'astro:assets';
+import forensicsImage from '../_assets/forensics-analysis.webp';
+import ResourceCard from '../_components/content/ResourceCard.astro';
+import ResourceGrid from '../_components/content/ResourceGrid.astro';
+import { Accordion, AccordionItem } from '@/components/ui/accordion';
+
+## What is Forensics?
+
+Digital Forensics is very much like being a detective, or a forensics analyst
+in a crime scene. Only that you focus on material found on digital devices
+related to cybercrime.
+
+In the context of CTFs, it is a broad category that often involves analyzing
+file formats, network packets, examining memory dumps, or recovering hidden data
+through steganography. Another way to put it is, you are like an archeologist,
+finding clues from digital activity that has happened in the past.
+
+<figure>
+  <Image
+    src={forensicsImage}
+    alt="Digital forensics challenge analysis"
+    width={700}
+    loading="lazy"
+  />
+  <figcaption>Image credit: Santhosh Kumar R Forensics CTF Writeup</figcaption>
+</figure>
+
+## Beginner's Guide to Forensics
+
+Forensics typically requires you to learn specialized tools to uncover
+information. Here are some of the core skills you need to learn:
+
+<Accordion>
+  <AccordionItem title="Check the File Type">
+    Don't trust file extensions. Use the <code>file</code> command on Linux or a
+    hex editor to check the “magic numbers” (the first few bytes) to see what a
+    file really is. A '.jpg' might actually be a zip file.
+  </AccordionItem>
+  <AccordionItem title="Look for Hidden Data">
+    Strings aren't always visible. Use the <code>strings</code> command to find
+    printable characters in a binary file. For images or audio, data can be
+    hidden with steganography; try tools like <code>steghide</code> or online
+    solvers.
+  </AccordionItem>
+  <AccordionItem title="Analyse Network Traffic">
+    If you get a PCAP file, open it in Wireshark. You can filter by protocol
+    (like HTTP, DNS) or “Follow TCP Stream” to piece together conversations and
+    find transferred files or flags.
+  </AccordionItem>
+  <AccordionItem title="Extract Embedded Files">
+    Files can be hidden inside other files. Tools like <code>binwalk</code> or{' '}
+    <code>foremost</code> can scan a file and automatically extract any embedded
+    files they recognize, which is common in firmware or disk images.
+  </AccordionItem>
+</Accordion>
+
+## Resources & Tools
+
+<ResourceGrid>
+  <ResourceCard
+    href="https://www.wireshark.org/"
+    title="Wireshark"
+    description="The most well-known network protocol analyzer."
+  />
+  <ResourceCard
+    href="https://github.com/volatilityfoundation/volatility"
+    title="Volatility Framework"
+    description="An open-source memory forensics framework for incident response and malware analysis."
+  />
+  <ResourceCard
+    href="https://exif.tools/"
+    title="exif.tools"
+    description="An online tool to view and analyze metadata from various file types, especially images."
+  />
+  <ResourceCard
+    href="https://github.com/ReFirmLabs/binwalk"
+    title="Binwalk"
+    description="A tool for analyzing, reverse engineering, and extracting firmware images."
+  />
+  <ResourceCard
+    href="https://www.aperisolve.com/"
+    title="Aperisolve"
+    description="An online platform that performs layer analysis on images to reveal hidden data from steganography."
+  />
+</ResourceGrid>

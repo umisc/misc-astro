@@ -1,0 +1,14 @@
+---
+import { AuroraCanvas } from './AuroraCanvas';
+---
+
+<div
+  transition:persist="aurora-background"
+  aria-hidden="true"
+  class="pointer-events-none fixed -top-50 left-0 -z-10 h-[calc(100lvh+400px)] w-lvw overflow-hidden"
+  style="background: radial-gradient(ellipse 75% 65% at 5% 0%, color-mix(in srgb, var(--aurora-teal) 70%, transparent) 0%, color-mix(in srgb, var(--aurora-teal) 25%, transparent) 42%, transparent 72%), radial-gradient(ellipse 80% 70% at 105% 100%, color-mix(in srgb, var(--aurora-blue) 70%, transparent) 0%, color-mix(in srgb, var(--aurora-blue) 25%, transparent) 45%, transparent 74%), radial-gradient(ellipse 70% 65% at 50% 50%, color-mix(in srgb, var(--aurora-violet) 62%, transparent) 0%, color-mix(in srgb, var(--aurora-violet) 22%, transparent) 45%, transparent 75%), var(--canvas);"
+>
+  <div class="absolute inset-0 motion-reduce:hidden">
+    <AuroraCanvas client:media="(prefers-reduced-motion: no-preference)" />
+  </div>
+</div>

@@ -1,0 +1,36 @@
+---
+import { ArrowUpRightIcon } from '@phosphor-icons/react/ssr';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+type Props = {
+  href: string;
+  title: string;
+  description: string;
+};
+
+const { href, title, description } = Astro.props;
+---
+
+<Card
+  as="a"
+  variant="interactive"
+  {href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <CardHeader>
+    <CardTitle className="flex items-center justify-between gap-cluster">
+      {title}
+      <ArrowUpRightIcon aria-hidden="true" className="size-5" />
+    </CardTitle>
+  </CardHeader>
+  <CardContent>
+    <CardDescription className="leading-6">{description}</CardDescription>
+  </CardContent>
+</Card>

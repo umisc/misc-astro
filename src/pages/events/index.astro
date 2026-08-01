@@ -1,0 +1,44 @@
+---
+import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import EventsExperience from './_components/EventsExperience';
+import Container from '@/components/site/Container.astro';
+import { CalendarDotsIcon } from '@phosphor-icons/react/ssr';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import type { EventViewModel } from './_lib/types';
+
+const events = (
+  await Promise.all(
+    (await getCollection('events')).map(async ({ id, data }) => {
+      const image = await getImage({
+        src: data.image,
+        width: 768,
+        height: 384,
+        fit: 'cover',
+        format: 'webp',
+      });
+
+      return {
+        id,
+        ...data,
+        image: {
+          src: image.src,
+          width: image.attributes.width,
+          height: image.attributes.height,
+        },
+      } satisfies EventViewModel;
+    }),
+  )
+).sort((a, b) => a.dateISO.localeCompare(b.dateISO));
+---
+
+<BaseLayout title="Events — MISC">
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead breadcrumbs={[{ label: 'Events' }]}>
+      <PageIntro title="Explore Our Events" icon={CalendarDotsIcon} />
+    </PageMasthead>
+    <EventsExperience events={events} client:load />
+  </Container>
+</BaseLayout>

@@ -1,0 +1,135 @@
+---
+import { getCollection } from 'astro:content';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/site/Container.astro';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import { FlagBannerFoldIcon } from '@phosphor-icons/react/ssr';
+import CategoryCard from './_components/CategoryCard.astro';
+import GettingStartedCard from './_components/GettingStartedCard.astro';
+import ResourceCard from './_components/content/ResourceCard.astro';
+import ResourceGrid from './_components/content/ResourceGrid.astro';
+
+const guides = (await getCollection('ctf')).sort(
+  (a, b) =>
+    a.data.order - b.data.order ||
+    a.data.title.localeCompare(b.data.title, 'en'),
+);
+---
+
+<BaseLayout title="CTF Guide — MISC">
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead breadcrumbs={[{ label: 'CTF Guide' }]}>
+      <PageIntro title="CTF Guide" icon={FlagBannerFoldIcon}>
+        <p>
+          Capture The Flag (CTF) competitions are cybersecurity contests where
+          players solve challenges to find hidden "flags". They're one of the
+          best ways to build practical security skills.
+        </p>
+      </PageIntro>
+    </PageMasthead>
+
+    <section
+      class="flex flex-col gap-section-content"
+      aria-labelledby="started-title"
+    >
+      <h2
+        id="started-title"
+        class="text-center font-display text-3xl font-bold"
+      >
+        Getting Started
+      </h2>
+      <ol class="grid gap-content sm:grid-cols-2 lg:grid-cols-4">
+        <GettingStartedCard
+          step="01"
+          title="Learn the Basics"
+          description="Get comfortable with Linux, the command line, Python scripting, and basic networking concepts before diving into CTF challenges."
+        />
+        <GettingStartedCard
+          step="02"
+          title="Pick a Category"
+          description="Choose one category to start with, most beginners find Web Exploitation or Cryptography the most approachable entry points."
+        />
+        <GettingStartedCard
+          step="03"
+          title="Practice on Platforms"
+          description="Use beginner-friendly platforms like PicoCTF, TryHackMe, or HackTheBox to practice in a legal, structured environment."
+        />
+        <GettingStartedCard
+          step="04"
+          title="Join a Team"
+          description="CTFs are more fun (and more winnable) as a team. Join MISC to compete with other students and learn from each other."
+        />
+      </ol>
+    </section>
+
+    <section
+      class="flex flex-col gap-section-content"
+      aria-labelledby="categories-title"
+    >
+      <h2
+        id="categories-title"
+        class="text-center font-display text-3xl font-bold"
+      >
+        Challenge Categories
+      </h2>
+      <div class="grid gap-content sm:grid-cols-2 lg:grid-cols-3">
+        {
+          guides.map(({ id, data }) => (
+            <CategoryCard
+              href={`/ctf/${id}`}
+              title={data.title}
+              description={data.description}
+              tags={data.tags}
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    <section
+      class="flex flex-col gap-section-content"
+      aria-labelledby="resources-title"
+    >
+      <h2
+        id="resources-title"
+        class="text-center font-display text-3xl font-bold"
+      >
+        Useful Resources
+      </h2>
+      <ResourceGrid>
+        <ResourceCard
+          href="https://picoctf.org"
+          title="PicoCTF"
+          description="Beginner-friendly CTF platform with year-round practice problems."
+        />
+        <ResourceCard
+          href="https://ctftime.org"
+          title="CTFtime"
+          description="Calendar of upcoming CTF competitions worldwide."
+        />
+        <ResourceCard
+          href="https://hackthebox.com"
+          title="HackTheBox"
+          description="Labs and challenges across all skill levels."
+        />
+        <ResourceCard
+          href="https://tryhackme.com"
+          title="TryHackMe"
+          description="Guided learning paths for beginners in cybersecurity."
+        />
+        <ResourceCard
+          href="https://cryptohack.org"
+          title="CryptoHack"
+          description="Dedicated platform for learning cryptography through challenges."
+        />
+        <ResourceCard
+          href="https://ctf101.org"
+          title="CTF 101"
+          description="Introductory guide covering all major CTF categories."
+        />
+      </ResourceGrid>
+    </section>
+  </Container>
+</BaseLayout>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import DesignSystemExperience from './_components/DesignSystemExperience';
+import PageIntro from '@/components/site/PageIntro.astro';
+import Container from '@/components/site/Container.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import { PaletteIcon } from '@phosphor-icons/react/ssr';
+---
+
+<BaseLayout title="Design system — MISC">
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead breadcrumbs={[{ label: 'Design System' }]}>
+      <PageIntro title="Design System" icon={PaletteIcon} />
+    </PageMasthead>
+    <DesignSystemExperience client:load />
+  </Container>
+</BaseLayout>

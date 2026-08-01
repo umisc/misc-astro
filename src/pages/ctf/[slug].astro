@@ -1,0 +1,30 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+import CategoryLayout from './_components/CategoryLayout.astro';
+import ProseLink from './_components/content/ProseLink.astro';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('ctf');
+
+  return guides.map((guide) => ({
+    params: { slug: guide.id },
+    props: { guide },
+  }));
+}
+
+type Props = {
+  guide: CollectionEntry<'ctf'>;
+};
+
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+---
+
+<CategoryLayout
+  title={guide.data.title}
+  description={guide.data.description}
+  tags={guide.data.tags}
+>
+  <Content components={{ a: ProseLink }} />
+</CategoryLayout>

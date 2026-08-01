@@ -1,0 +1,177 @@
+@import '@fontsource-variable/orbitron';
+@import '@fontsource/poppins/100.css';
+@import '@fontsource/poppins/200.css';
+@import '@fontsource/poppins/300.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/poppins/800.css';
+@import '@fontsource/poppins/900.css';
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Orbitron Variable', ui-sans-serif, system-ui, sans-serif;
+  /* Utopia-inspired fluid space scale: 320px → 1280px. */
+  --spacing-fluid-3xs: clamp(0.25rem, 0.2292rem + 0.1042vw, 0.3125rem);
+  --spacing-fluid-2xs: clamp(0.5rem, 0.4583rem + 0.2083vw, 0.625rem);
+  --spacing-fluid-xs: clamp(0.75rem, 0.6875rem + 0.3125vw, 0.9375rem);
+  --spacing-fluid-s: clamp(1rem, 0.9167rem + 0.4167vw, 1.25rem);
+  --spacing-fluid-m: clamp(1.5rem, 1.375rem + 0.625vw, 1.875rem);
+  --spacing-fluid-l: clamp(2rem, 1.8333rem + 0.8333vw, 2.5rem);
+  --spacing-fluid-xl: clamp(3rem, 2.75rem + 1.25vw, 3.75rem);
+  --spacing-fluid-2xl: clamp(4rem, 3.6667rem + 1.6667vw, 5rem);
+  --spacing-fluid-3xl: clamp(5rem, 4.5833rem + 2.0833vw, 6.25rem);
+  --spacing-fluid-s-l: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --spacing-fluid-xs-2xl: clamp(0.75rem, -0.6667rem + 7.0833vw, 5rem);
+  --spacing-fluid-m-2xl: clamp(1.5rem, 0.3333rem + 5.8333vw, 5rem);
+  --spacing-fluid-l-xl: clamp(2rem, 1.4167rem + 2.9167vw, 3.75rem);
+  --spacing-page-inline: var(--spacing-fluid-xs-2xl);
+  --spacing-page-block: var(--spacing-fluid-l-xl);
+  --spacing-page-section: var(--spacing-fluid-2xl);
+  --spacing-section: var(--spacing-fluid-3xl);
+  --spacing-section-content: var(--spacing-fluid-l);
+  --spacing-content: var(--spacing-fluid-s);
+  --spacing-cluster: var(--spacing-fluid-xs);
+  --spacing-card: var(--spacing-fluid-m);
+  --spacing-card-compact: var(--spacing-fluid-s);
+  --spacing-card-spacious: var(--spacing-fluid-l);
+  --animate-metallic-shimmer: metallic-shimmer 6s linear infinite;
+  --animate-sponsor-glitch: sponsor-glitch 1s linear infinite;
+  --animate-sponsor-glitch-top: sponsor-glitch-top 1s linear infinite;
+  --animate-sponsor-glitch-bottom: sponsor-glitch-bottom 1.5s linear infinite;
+
+  @keyframes metallic-shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+
+  @keyframes sponsor-glitch {
+    2%,
+    64% {
+      transform: translate(2px, 0) skew(0deg);
+    }
+    4%,
+    60% {
+      transform: translate(-2px, 0) skew(0deg);
+    }
+    62% {
+      transform: translate(0, 0) skew(5deg);
+    }
+  }
+
+  @keyframes sponsor-glitch-top {
+    2%,
+    64% {
+      transform: translate(2px, -2px);
+    }
+    4%,
+    60% {
+      transform: translate(-2px, 2px);
+    }
+    62% {
+      transform: translate(13px, -1px) skew(-13deg);
+    }
+  }
+
+  @keyframes sponsor-glitch-bottom {
+    2%,
+    64% {
+      transform: translate(-2px, 0);
+    }
+    4%,
+    60% {
+      transform: translate(-2px, 0);
+    }
+    62% {
+      transform: translate(-22px, 5px) skew(21deg);
+    }
+  }
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+  --color-canvas: var(--canvas);
+  --color-surface-hover: var(--surface-hover);
+  --color-aurora-teal: var(--aurora-teal);
+  --color-aurora-blue: var(--aurora-blue);
+  --color-aurora-violet: var(--aurora-violet);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: dark;
+  /* Semantic interface roles. */
+  --background: oklch(0.13 0.015 260);
+  --canvas: #1a1a1a;
+  --surface-hover: #1c2128;
+  --foreground: oklch(0.96 0.01 250);
+  --card: oklch(0.18 0.02 260 / 0.82);
+  --card-foreground: oklch(0.96 0.01 250);
+  --popover: oklch(0.14 0.018 260 / 0.98);
+  --popover-foreground: oklch(0.96 0.01 250);
+  --primary: oklch(0.82 0.14 175);
+  --primary-foreground: oklch(0.16 0.04 190);
+  --secondary: oklch(0.25 0.025 260);
+  --secondary-foreground: oklch(0.96 0.01 250);
+  --muted: oklch(0.22 0.02 260);
+  --muted-foreground: oklch(0.72 0.025 250);
+  --accent: var(--primary);
+  --accent-foreground: var(--primary-foreground);
+  --destructive: oklch(0.65 0.2 25);
+  --border: oklch(0.96 0.01 250 / 0.18);
+  --input: oklch(0.96 0.01 250 / 0.2);
+  --ring: oklch(0.82 0.14 175);
+  --radius: 0.75rem;
+  --destructive-foreground: oklch(0.99 0 0);
+  --glass: oklch(1 0 0 / 0.06);
+  --glass-border: oklch(1 0 0 / 0.2);
+
+  /* Stable artwork roles. Bespoke sponsor and 3D material colors stay local. */
+  --aurora-teal: #067167;
+  --aurora-blue: #2d475d;
+  --aurora-violet: #423c6b;
+  --brand-gradient-teal: #0bcbb8;
+  --brand-gradient-blue: #9bb8cf;
+  --brand-gradient-violet: #b5b1d3;
+  --metallic-white: #ffffff;
+  --metallic-light: #f8fafc;
+  --metallic-mid: #d8e0ea;
+  --metallic-shadow: #7b8796;
+  --metallic-cool: #a7b2c0;
+}

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.pi-subagents/
+private-content/
+pnpm-lock.yaml
+
+misc-astro.vercel.app-*.json

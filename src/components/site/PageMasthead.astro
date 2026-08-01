@@ -1,0 +1,17 @@
+---
+import SiteBreadcrumbs, { type BreadcrumbTrail } from './SiteBreadcrumbs.astro';
+
+type Props = {
+  breadcrumbs: BreadcrumbTrail;
+  class?: string;
+};
+
+const { breadcrumbs, class: className = '' } = Astro.props as Props;
+---
+
+<SiteBreadcrumbs {breadcrumbs} class="pt-[calc(var(--spacing-page-block)/2)]" />
+<div
+  class={`flex min-w-0 flex-col gap-section-content pt-[calc(var(--spacing-page-block)/2)-12rem] ${className}`}
+>
+  <slot />
+</div>

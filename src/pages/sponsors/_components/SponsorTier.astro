@@ -1,0 +1,118 @@
+---
+import CommunityPartnersTicker from './CommunityPartnersTicker';
+import SponsorGlitchLogo from './SponsorGlitchLogo';
+import type { Sponsor, SponsorTier as TierName } from '../_lib/types';
+import { cn } from '@/lib/utils';
+
+type Props = {
+  name: TierName;
+  sponsors: Sponsor[];
+};
+
+type TierStyle = {
+  label: string;
+  border: string;
+  stroke: string;
+  title: string;
+  surface: string;
+  grid: string;
+};
+
+const tierStyles: Record<TierName, TierStyle> = {
+  Platinum: {
+    label: 'Platinum',
+    border: 'border-sky-300/70',
+    stroke: 'stroke-sky-300/70',
+    title: 'text-sky-200',
+    surface:
+      'bg-[radial-gradient(ellipse_at_top,oklch(0.78_0.12_230/0.12),transparent_65%)]',
+    grid: 'grid-cols-1 sm:grid-cols-2',
+  },
+  Gold: {
+    label: 'Gold',
+    border: 'border-amber-300/70',
+    stroke: 'stroke-amber-300/70',
+    title: 'text-amber-200',
+    surface:
+      'bg-[radial-gradient(ellipse_at_top,oklch(0.8_0.14_85/0.1),transparent_65%)]',
+    grid: 'grid-cols-1 sm:grid-cols-2',
+  },
+  Silver: {
+    label: 'Silver',
+    border: 'border-slate-300/60',
+    stroke: 'stroke-slate-300/60',
+    title: 'text-slate-200',
+    surface:
+      'bg-[radial-gradient(ellipse_at_top,oklch(0.75_0.03_250/0.08),transparent_65%)]',
+    grid: 'grid-cols-1 sm:grid-cols-3',
+  },
+  Community: {
+    label: 'Community Partners',
+    border: 'border-emerald-300/60',
+    stroke: 'stroke-emerald-300/60',
+    title: 'text-emerald-200',
+    surface:
+      'bg-[radial-gradient(ellipse_at_top,oklch(0.75_0.13_160/0.07),transparent_65%)] px-0',
+    grid: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
+  },
+};
+
+const { name, sponsors } = Astro.props;
+const style = tierStyles[name];
+const headingId = `${name.toLowerCase()}-sponsors-heading`;
+---
+
+<section
+  aria-labelledby={headingId}
+  class={cn(
+    `relative flex flex-col gap-section-content overflow-clip rounded-2xl border bg-card px-content pb-content pt-16 text-card-foreground shadow-sm`,
+    style.border,
+    style.surface,
+  )}
+>
+  <h2
+    id={headingId}
+    class={`absolute left-1/2 -top-px flex h-12 w-fit min-w-72 -translate-x-1/2 items-center justify-center px-9 pb-1 text-center font-display text-sm font-semibold uppercase tracking-[0.14em] sm:text-base sm:tracking-[0.18em] ${style.title}`}
+  >
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 320 48"
+      preserveAspectRatio="none"
+      class="absolute inset-0 h-full w-full"
+    >
+      <path
+        d="M0 0L18 40Q21 47 30 47H290Q299 47 302 40L320 0"
+        fill="none"
+        vector-effect="non-scaling-stroke"
+        class={style.stroke}></path>
+    </svg>
+    <span class="relative z-10 whitespace-nowrap">{style.label}</span>
+  </h2>
+
+  {
+    name === 'Community' ? (
+      <CommunityPartnersTicker client:load sponsors={sponsors} />
+    ) : (
+      <ul class={`grid items-stretch gap-cluster sm:gap-content ${style.grid}`}>
+        {sponsors.map((sponsor) => (
+          <li class="min-w-0">
+            <a
+              href={sponsor.href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Visit ${sponsor.name}`}
+              class="group flex h-32 w-full items-center justify-center rounded-xl p-content transition-colors duration-200 outline-none hover:bg-background/55 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+            >
+              <SponsorGlitchLogo
+                src={sponsor.logo.src}
+                alt={sponsor.name}
+                width={sponsor.logo.width}
+                height={sponsor.logo.height}
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>

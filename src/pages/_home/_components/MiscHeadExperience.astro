@@ -1,0 +1,47 @@
+---
+import { getImage } from 'astro:assets';
+import fallback from '../_assets/misc-head-fallback.webp';
+import MiscHead from './MiscHead';
+
+// The initial front-facing silhouette occupies 79.3% of the rotation-safe
+// canvas. All desktop layout geometry is derived from these two inputs.
+const HEAD_VISIBLE_RATIO = 0.793;
+const HEAD_CANVAS_ASPECT = 1.0273;
+const desktopCanvasViewportWidth = Math.ceil(100 / (1 + HEAD_VISIBLE_RATIO));
+
+const image = await getImage({
+  src: fallback,
+  widths: [320, 640, 800, 1200],
+  sizes: `(min-width: 1024px) ${desktopCanvasViewportWidth}vw, 100vw`,
+  format: 'webp',
+});
+
+const fallbackImage = {
+  src: image.src,
+  srcSet: image.srcSet.attribute,
+  sizes: image.attributes.sizes,
+  width: image.attributes.width,
+  height: image.attributes.height,
+};
+---
+
+<div
+  class="relative order-1 mx-auto aspect-(--head-canvas-aspect) w-full max-w-md lg:order-2 lg:aspect-[calc(var(--head-canvas-aspect)*var(--head-visible-ratio))] lg:w-auto lg:max-w-none lg:flex-[var(--head-visible-ratio)_1_0%]"
+  style={`--head-visible-ratio: ${HEAD_VISIBLE_RATIO}; --head-canvas-aspect: ${HEAD_CANVAS_ASPECT};`}
+  role="img"
+  aria-label="Interactive 3D MISC head"
+>
+  <div
+    class="absolute top-1/2 left-1/2 aspect-(--head-canvas-aspect) w-full -translate-x-1/2 -translate-y-1/2 lg:w-[calc(100%/var(--head-visible-ratio))]"
+  >
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-[12%] z-0 rounded-full bg-radial-[at_55%_45%] from-primary/30 via-emerald-500/10 via-55% to-transparent blur-3xl"
+    >
+    </div>
+
+    <div class="absolute inset-0 z-10">
+      <MiscHead fallbackImage={fallbackImage} client:load />
+    </div>
+  </div>
+</div>

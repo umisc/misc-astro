@@ -1,0 +1,37 @@
+---
+import Button from '@/components/ui/button';
+import SponsorTier from './SponsorTier.astro';
+import type { Sponsor, SponsorTier as TierName } from '../_lib/types';
+
+type Props = {
+  sponsors: Sponsor[];
+};
+
+const { sponsors } = Astro.props;
+const tiers: TierName[] = ['Platinum', 'Gold', 'Silver', 'Community'];
+const grouped = Object.fromEntries(
+  tiers.map((tier) => [
+    tier,
+    sponsors.filter((sponsor) => sponsor.tier === tier),
+  ]),
+) as Record<TierName, Sponsor[]>;
+const sponsorshipEmail =
+  'mailto:sponsorships@misc.org.au?subject=Sponsorship%20Inquiry&body=';
+---
+
+<section class="relative overflow-hidden text-slate-200">
+  <div class="flex flex-col gap-section-content">
+    {
+      tiers.map((tier) =>
+        grouped[tier].length ? (
+          <SponsorTier name={tier} sponsors={grouped[tier]} />
+        ) : null,
+      )
+    }
+    <div class="flex justify-center">
+      <Button client:load href={sponsorshipEmail} size="lg" variant="matrix">
+        Be a sponsor
+      </Button>
+    </div>
+  </div>
+</section>

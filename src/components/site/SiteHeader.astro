@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import { ListIcon } from '@phosphor-icons/react/ssr';
+import logo from '@/assets/brand/umisc-logo.png';
+import Button, { buttonVariants } from '@/components/ui/button';
+import Container from './Container.astro';
+
+const links = [
+  { label: 'Events', href: '/events' },
+  { label: 'Sponsors', href: '/sponsors' },
+  { label: 'Workshops', href: 'https://github.com/umisc/workshops' },
+  { label: 'CTF', href: '/ctf' },
+  { label: 'About', href: '/about' },
+];
+
+const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string) =>
+  href === '/'
+    ? pathname === '/'
+    : pathname === href || pathname.startsWith(`${href}/`);
+const activeClasses = 'bg-muted-foreground/15 text-foreground';
+---
+
+<header class="progressive-header sticky top-0 isolate z-50 overflow-visible">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 -bottom-7 z-0 bg-linear-to-b from-background to-transparent"
+  >
+  </div>
+  <Container class="relative z-10 py-2">
+    <nav
+      aria-label="Main navigation"
+      class="flex items-center justify-between font-display font-bold"
+    >
+      <a
+        href="/"
+        aria-current={isActive('/') ? 'page' : undefined}
+        class:list={[
+          'flex items-center gap-2 rounded-lg p-1 text-foreground transition-opacity outline-none hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none',
+        ]}
+      >
+        <Image src={logo} alt="" width={80} class="size-10 object-contain" />
+        <span class="text-sm tracking-wide sm:text-lg">MISC</span>
+      </a>
+
+      <div class="hidden items-center gap-2 md:flex">
+        {
+          links.map((link) => (
+            <Button
+              href={link.href}
+              variant="ghost"
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              className={isActive(link.href) ? activeClasses : undefined}
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
+            >
+              {link.label}
+            </Button>
+          ))
+        }
+        <Button
+          client:load
+          href="https://umsu.unimelb.edu.au/buddy-up/clubs/clubs-listing/join/6949/"
+          target="_blank"
+          rel="noreferrer"
+          variant="matrix"
+        >
+          Join
+        </Button>
+      </div>
+
+      <details class="group relative z-20 md:hidden">
+        <summary
+          class={`${buttonVariants({ variant: 'outline' })} cursor-pointer list-none marker:content-none md:hidden`}
+          aria-label="Toggle navigation menu"
+        >
+          <ListIcon size={24} aria-hidden="true" />
+          Menu
+        </summary>
+        <div
+          class="absolute right-0 mt-2 flex min-w-40 flex-col gap-cluster rounded-2xl border border-border bg-popover p-2 shadow-[0_8px_24px_rgba(0,0,0,.55)]"
+          data-spacing-exception="positioning"
+        >
+          {
+            links.map((link) => (
+              <Button
+                href={link.href}
+                variant="ghost"
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                className={`w-full justify-start ${isActive(link.href) ? activeClasses : ''}`}
+                target={link.href.startsWith('http') ? '_blank' : undefined}
+                rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
+              >
+                {link.label}
+              </Button>
+            ))
+          }
+          <Button
+            client:load
+            href="https://umsu.unimelb.edu.au/buddy-up/clubs/clubs-listing/join/6949/"
+            target="_blank"
+            rel="noreferrer"
+            variant="matrix"
+            className="w-full justify-start"
+          >
+            Join
+          </Button>
+        </div>
+      </details>
+    </nav>
+  </Container>
+</header>

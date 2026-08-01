@@ -1,0 +1,33 @@
+---
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+type Props = {
+  href: string;
+  title: string;
+  description: string;
+  tags: readonly string[];
+};
+
+const { href, title, description, tags } = Astro.props;
+---
+
+<Card as="a" variant="interactive" {href} className="flex h-full flex-col">
+  <CardHeader>
+    <CardTitle>{title}</CardTitle>
+  </CardHeader>
+  <CardContent className="flex flex-1 flex-col gap-content">
+    <CardDescription className="flex-1 leading-6">
+      {description}
+    </CardDescription>
+    <div class="flex flex-wrap gap-2">
+      {tags.map((tag) => <Badge variant="outline">{tag}</Badge>)}
+    </div>
+  </CardContent>
+</Card>

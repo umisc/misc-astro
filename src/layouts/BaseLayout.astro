@@ -1,0 +1,48 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import SiteHeader from '@/components/site/SiteHeader.astro';
+import SiteFooter from '@/components/site/SiteFooter.astro';
+import AuroraBackground from '@/components/effects/aurora/AuroraBackground.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'MISC — Melbourne Information Security Club',
+  description = 'The University of Melbourne Information Security Club.',
+} = Astro.props;
+---
+
+<html lang="en" class="bg-canvas text-foreground">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/favicon.ico"
+      sizes="16x16 32x32 48x48"
+    />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body
+    class="isolate flex min-h-dvh flex-col overflow-x-clip bg-transparent font-sans antialiased"
+  >
+    <AuroraBackground />
+    <SiteHeader />
+    <main class="relative z-10 flex-1 pb-page-block">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

@@ -1,0 +1,36 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/site/Container.astro';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import { Badge } from '@/components/ui/badge';
+
+type Props = {
+  title: string;
+  description: string;
+  tags: readonly string[];
+};
+const { title, description, tags } = Astro.props;
+---
+
+<BaseLayout title={`${title} — CTF Guide — MISC`}>
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead
+      breadcrumbs={[{ label: 'CTF Guide', href: '/ctf' }, { label: title }]}
+    >
+      <div class="flex flex-col items-center gap-content">
+        <PageIntro {title}>
+          <p>{description}</p>
+        </PageIntro>
+        <div class="flex flex-wrap justify-center gap-cluster">
+          {tags.map((tag) => <Badge variant="outline">{tag}</Badge>)}
+        </div>
+      </div>
+    </PageMasthead>
+    <article
+      class="mx-auto prose w-full max-w-4xl prose-invert prose-headings:font-display prose-headings:text-foreground prose-a:underline-offset-4 prose-code:rounded prose-code:px-1 prose-code:py-0.5 prose-code:before:content-none prose-pre:overflow-x-auto prose-pre:border prose-pre:border-border prose-pre:bg-card! prose-pre:shadow-sm"
+    >
+      <slot />
+    </article>
+  </Container>
+</BaseLayout>
