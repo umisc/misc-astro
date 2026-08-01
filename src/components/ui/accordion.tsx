@@ -32,7 +32,9 @@ function AccordionItem({
     <details
       data-slot="accordion-item"
       className={cn(
-        'group/accordion-item [interpolate-size:allow-keywords] not-last:border-b not-last:border-border details-content:overflow-y-clip details-content:opacity-0 details-content:transition-[block-size,content-visibility,opacity] details-content:transition-discrete details-content:duration-200 details-content:ease-out details-content:block-0 open:details-content:opacity-100 open:details-content:block-auto motion-reduce:details-content:transition-none',
+        'group/accordion-item [interpolate-size:allow-keywords] not-last:border-b not-last:border-border details-content:overflow-y-clip details-content:transition-[block-size,content-visibility,opacity] details-content:transition-discrete details-content:duration-200 details-content:ease-out motion-reduce:details-content:transition-none',
+        'details-content:opacity-0 details-content:block-0',
+        'open:details-content:opacity-100 open:details-content:block-auto',
         className,
       )}
       {...props}
