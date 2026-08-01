@@ -1,11 +1,7 @@
 name: Deploy Vercel Preview
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
+  workflow_call:
 
 permissions:
   contents: read
@@ -21,7 +17,6 @@ env:
 
 jobs:
   deploy:
-    if: github.event.pull_request.head.repo.full_name == 'umisc/misc-astro'
     runs-on: ubuntu-latest
     environment:
       name: preview
