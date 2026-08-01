@@ -1,0 +1,115 @@
+name: Deploy Vercel Preview
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: vercel-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    if: github.event.pull_request.head.repo.full_name == 'umisc/misc-astro'
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+
+    steps:
+      - name: Checkout pull request merge commit
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+
+      - name: Load misc-content deploy key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.MISC_CONTENT_DEPLOY_KEY }}
+
+      - name: Rewrite GitHub HTTPS URLs to SSH
+        run: git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+      - name: Checkout content submodule
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Pull Vercel preview configuration
+        env:
+          VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
+        run: pnpm dlx vercel@latest pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build Vercel artifacts
+        env:
+          VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
+        run: pnpm dlx vercel@latest build --token="$VERCEL_TOKEN"
+
+      - name: Deploy prebuilt artifacts
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
+        run: |
+          deployment_url="$(pnpm dlx vercel@latest deploy --prebuilt --token="$VERCEL_TOKEN")"
+          echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
+
+      - name: Update preview comment
+        if: always()
+        uses: actions/github-script@v8
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+          DEPLOYMENT_OUTCOME: ${{ steps.deploy.outcome }}
+        with:
+          script: |
+            const marker = '<!-- misc-vercel-preview -->';
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const commit = context.payload.pull_request.head.sha;
+            const shortCommit = commit.slice(0, 7);
+            const commitUrl = `${context.serverUrl}/${owner}/${repo}/commit/${commit}`;
+
+            const succeeded = process.env.DEPLOYMENT_OUTCOME === 'success';
+            const body = succeeded
+              ? `${marker}\n### Vercel preview ready\n\nDeployed [\`${shortCommit}\`](${commitUrl}) to [${process.env.DEPLOYMENT_URL}](${process.env.DEPLOYMENT_URL}).`
+              : `${marker}\n### Vercel preview failed\n\nThe preview for [\`${shortCommit}\`](${commitUrl}) did not deploy. [View the failed workflow run](${runUrl}).`;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find((comment) => comment.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
