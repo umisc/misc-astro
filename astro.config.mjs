@@ -18,7 +18,8 @@ export default defineConfig({
     mdx(),
     react(),
     sitemap({
-      filter: (page) => !page.endsWith('/design-system/'),
+      filter: (page) =>
+        !page.endsWith('/design-system/') && !page.endsWith('/home/'),
     }),
   ],
   adapter: vercel(),
