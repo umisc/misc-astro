@@ -53,7 +53,7 @@ function AboutContent({ members }: Props) {
               variant="interactive"
               effect="pixel-shimmer"
               key={person.id}
-              href={`/about?member=${encodeURIComponent(person.id)}`}
+              href={`/about/?member=${encodeURIComponent(person.id)}`}
               data-astro-reload
               aria-labelledby={`member-card-title-${person.id}`}
               onClick={(click) => {

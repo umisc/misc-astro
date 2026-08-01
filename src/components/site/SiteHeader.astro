@@ -6,11 +6,11 @@ import Button, { buttonVariants } from '@/components/ui/button';
 import Container from './Container.astro';
 
 const links = [
-  { label: 'Events', href: '/events' },
-  { label: 'Sponsors', href: '/sponsors' },
+  { label: 'Events', href: '/events/' },
+  { label: 'Sponsors', href: '/sponsors/' },
   { label: 'Workshops', href: 'https://github.com/umisc/workshops' },
-  { label: 'CTF', href: '/ctf' },
-  { label: 'About', href: '/about' },
+  { label: 'CTF', href: '/ctf/' },
+  { label: 'About', href: '/about/' },
 ];
 
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
