@@ -1,31 +1,40 @@
 # MISC website
+
 ## Getting Started
+
 ### Prerequisities
+
 - Node.js 20+
 - pnpm
+
 ### First-time Setup
 
 **1. Clone the repository and its content submodule:**
+
 ```sh
 git clone --recurse-submodules https://github.com/umisc/misc-astro.git
 ```
 
 **2. Navigate to the directory:**
+
 ```sh
 cd misc-astro
 ```
 
 **3. Run pnpm install:**
+
 ```sh
 pnpm install
 ```
 
 **4. Run pnpm dev to spin up your local development server:**
+
 ```sh
 pnpm dev
 ```
 
 ### Making Changes
+
 If you forgot to `--recurse-submodules` when cloning, run these two commands:
 
 ```sh
@@ -34,17 +43,20 @@ git submodule update --init --recursive
 ```
 
 To pull changes, run:
+
 ```sh
 git pull --recurse-submodules
 git submodule update --init --recursive
 ```
 
 **1. To make changes to the content submodule, first navigate there:**
+
 ```sh
 cd content
 ```
 
 **2. Add your changes, commit, and push:**
+
 ```sh
 git add -A
 git commit -m "feat: write a descriptive message of what you added"
@@ -54,6 +66,7 @@ git push
 > If `git push` does not work, you may have to do `git push origin HEAD:main` instead.
 
 **3. Then, you must bump the submodule commit hash in the root repo:**
+
 ```sh
 cd ..
 git add content
