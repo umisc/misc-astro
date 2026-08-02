@@ -2,92 +2,110 @@ name: Deploy Vercel Preview
 
 on:
   workflow_call:
+    inputs:
+      artifact_name:
+        description: Name of the prebuilt Vercel output artifact
+        required: true
+        type: string
+      commit:
+        description: Pull request head commit
+        required: true
+        type: string
 
 permissions:
   contents: read
-  pull-requests: write
 
 concurrency:
   group: vercel-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
   deploy:
+    name: Deploy preview artifact
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     environment:
       name: preview
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
 
     steps:
-      - name: Checkout pull request merge commit
-        uses: actions/checkout@v4
+      - name: Checkout trusted deployment tooling
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: refs/pull/${{ github.event.pull_request.number }}/merge
-
-      - name: Load misc-content deploy key
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.MISC_CONTENT_DEPLOY_KEY }}
-
-      - name: Rewrite GitHub HTTPS URLs to SSH
-        run: git config --global url."git@github.com:".insteadOf "https://github.com/"
-
-      - name: Checkout content submodule
-        run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
+          ref: ${{ github.event.repository.default_branch }}
+          path: trusted-tooling
+          persist-credentials: false
 
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 11.15.1
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           cache: pnpm
+          cache-dependency-path: trusted-tooling/pnpm-lock.yaml
 
-      - name: Pull Vercel preview configuration
-        env:
-          VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
-        run: pnpm dlx vercel@latest pull --yes --environment=preview --token="$VERCEL_TOKEN"
+      - name: Install trusted deployment tooling
+        working-directory: trusted-tooling
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Build Vercel artifacts
-        env:
-          VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
-        run: pnpm dlx vercel@latest build --token="$VERCEL_TOKEN"
+      - name: Download prebuilt output
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: deployment/.vercel/output
 
-      - name: Deploy prebuilt artifacts
+      - name: Deploy prebuilt artifact
         id: deploy
+        working-directory: deployment
         env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
         run: |
-          deployment_url="$(pnpm dlx vercel@latest deploy --prebuilt --token="$VERCEL_TOKEN")"
+          deployment_url="$(../trusted-tooling/node_modules/.bin/vercel deploy --prebuilt --token="$VERCEL_TOKEN" | tail -n 1)"
+          if [[ ! "$deployment_url" =~ ^https://[a-zA-Z0-9.-]+\.vercel\.app$ ]]; then
+            echo "Vercel returned an invalid deployment URL." >&2
+            exit 1
+          fi
           echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
 
+  comment:
+    name: Update preview comment
+    if: always()
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Required to create or update the preview status comment.
+    env:
+      DEPLOYMENT_URL: ${{ needs.deploy.outputs.url }}
+      DEPLOYMENT_OUTCOME: ${{ needs.deploy.result }}
+      COMMIT: ${{ inputs.commit }}
+
+    steps:
       - name: Update preview comment
-        if: always()
-        uses: actions/github-script@v8
-        env:
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
-          DEPLOYMENT_OUTCOME: ${{ steps.deploy.outcome }}
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           script: |
             const marker = '<!-- misc-vercel-preview -->';
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
             const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
-            const commit = context.payload.pull_request.head.sha;
+            const commit = process.env.COMMIT;
             const shortCommit = commit.slice(0, 7);
             const commitUrl = `${context.serverUrl}/${owner}/${repo}/commit/${commit}`;
+            const url = process.env.DEPLOYMENT_URL;
+            const validUrl = /^https:\/\/[a-zA-Z0-9.-]+\.vercel\.app$/.test(url);
 
-            const succeeded = process.env.DEPLOYMENT_OUTCOME === 'success';
+            const succeeded = process.env.DEPLOYMENT_OUTCOME === 'success' && validUrl;
             const body = succeeded
-              ? `${marker}\n### Vercel preview ready\n\nDeployed [\`${shortCommit}\`](${commitUrl}) to [${process.env.DEPLOYMENT_URL}](${process.env.DEPLOYMENT_URL}).`
+              ? `${marker}\n### Vercel preview ready\n\nDeployed [\`${shortCommit}\`](${commitUrl}) to [${url}](${url}).`
               : `${marker}\n### Vercel preview failed\n\nThe preview for [\`${shortCommit}\`](${commitUrl}) did not deploy. [View the failed workflow run](${runUrl}).`;
 
             const comments = await github.paginate(github.rest.issues.listComments, {
