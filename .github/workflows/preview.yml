@@ -7,16 +7,20 @@ on:
         description: Name of the prebuilt Vercel output artifact
         required: true
         type: string
-      commit:
+      pr_head_sha:
         description: Pull request head commit
         required: true
         type: string
+      pr_number:
+        description: Pull request number
+        required: true
+        type: number
 
 permissions:
   contents: read
 
 concurrency:
-  group: vercel-preview-${{ github.event.pull_request.number }}
+  group: vercel-preview-${{ inputs.pr_number }}
   cancel-in-progress: true
 
 jobs:
@@ -34,7 +38,7 @@ jobs:
       - name: Checkout trusted deployment tooling
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: main
           path: trusted-tooling
           persist-credentials: false
 
@@ -82,11 +86,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write # Required to create or update the preview status comment.
+      pull-requests: write
     env:
       DEPLOYMENT_URL: ${{ needs.deploy.outputs.url }}
       DEPLOYMENT_OUTCOME: ${{ needs.deploy.result }}
-      COMMIT: ${{ inputs.commit }}
+      COMMIT: ${{ inputs.pr_head_sha }}
+      PR_NUMBER: ${{ inputs.pr_number }}
 
     steps:
       - name: Update preview comment
@@ -95,7 +100,7 @@ jobs:
           script: |
             const marker = '<!-- misc-vercel-preview -->';
             const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
+            const issue_number = Number(process.env.PR_NUMBER);
             const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
             const commit = process.env.COMMIT;
             const shortCommit = commit.slice(0, 7);

@@ -140,7 +140,7 @@ jobs:
       - name: Upload Vercel output
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: vercel-output-${{ github.sha }}
+          name: vercel-output-${{ github.run_id }}
           path: .vercel/output
           include-hidden-files: true
           if-no-files-found: error
@@ -148,15 +148,21 @@ jobs:
 
   preview:
     name: Preview
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == 'umisc/misc-astro' &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.actor != 'dependabot[bot]'
     needs: build
     permissions:
       contents: read
       pull-requests: write # The reusable workflow updates one preview status comment.
-    uses: ./.github/workflows/preview.yml
+    uses: umisc/misc-astro/.github/workflows/preview.yml@main
     with:
-      artifact_name: vercel-output-${{ github.sha }}
-      commit: ${{ github.event.pull_request.head.sha }}
+      artifact_name: vercel-output-${{ github.run_id }}
+      pr_head_sha: ${{ github.event.pull_request.head.sha }}
+      pr_number: ${{ github.event.pull_request.number }}
+    secrets: inherit
 
   production:
     name: Production
@@ -166,4 +172,5 @@ jobs:
       contents: read
     uses: ./.github/workflows/deploy.yml
     with:
-      artifact_name: vercel-output-${{ github.sha }}
+      artifact_name: vercel-output-${{ github.run_id }}
+    secrets: inherit
