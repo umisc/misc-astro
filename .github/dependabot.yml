@@ -28,3 +28,8 @@ updates:
       time: '09:00'
       timezone: Australia/Melbourne
     open-pull-requests-limit: 5
+    groups:
+      actions-minor-and-patch:
+        update-types:
+          - minor
+          - patch
