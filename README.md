@@ -112,9 +112,9 @@ Read the [Astro docs](https://docs.astro.build/en/getting-started/).
 ## Contribution Workflow
 
 1. Create or choose an issue for the work.
-2. Create a branch from the latest `main`. Use `<type>/<issue-number>-<short-description>`, for example `feat/123-name-of-branch` or `fix/456-mobile-menu`.
+2. Create a branch from the latest `main`. Use `<type>/<issue-number>-<short-description>`, for example `feat/123-name-of-branch` or `fix/456-name-of-branch`.
 3. Make and test your changes. Run `pnpm check` before committing.
-4. Write commits using [Conventional Commits](https://www.conventionalcommits.org/): `<type>(optional-scope): <description>`, for example `feat(nav): add mobile menu`. Common types include `feat`, `fix`, `docs`, `refactor`, `test`, and `chore`.
+4. Write commits using [Conventional Commits](https://www.conventionalcommits.org/): `<type>(optional-scope): <description>`, for example `feat: add ctf guide`. Common types include `feat`, `fix`, `docs`, `refactor`, `test`, and `chore`.
 5. Push your branch and open a pull request into `main`.
 6. Link the pull request to its issue using `Closes #123`, describe the changes and testing, then request review.
 
