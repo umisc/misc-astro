@@ -36,10 +36,11 @@ pnpm dev
 ### Making Changes
 
 > If you forgot to `--recurse-submodules` when cloning, run these two commands:
-  > ```sh
-  > git submodule sync --recursive
-  > git submodule update --init --recursive
-  > ```
+>
+> ```sh
+> git submodule sync --recursive
+> git submodule update --init --recursive
+> ```
 
 **To pull changes, run:**
 
@@ -49,6 +50,7 @@ git submodule update --init --recursive
 ```
 
 #### Root Repository
+
 To make changes to the root repository, the standard add, commit, push flow applies.
 
 > Make sure you are in the root directory.
