@@ -35,19 +35,33 @@ pnpm dev
 
 ### Making Changes
 
-If you forgot to `--recurse-submodules` when cloning, run these two commands:
+> If you forgot to `--recurse-submodules` when cloning, run these two commands:
+  > ```sh
+  > git submodule sync --recursive
+  > git submodule update --init --recursive
+  > ```
 
-```sh
-git submodule sync --recursive
-git submodule update --init --recursive
-```
-
-To pull changes, run:
+**To pull changes, run:**
 
 ```sh
 git pull --recurse-submodules
 git submodule update --init --recursive
 ```
+
+#### Root Repository
+To make changes to the root repository, the standard add, commit, push flow applies.
+
+> Make sure you are in the root directory.
+
+```sh
+git add .
+git commit -m "feat: write a descriptive message of what you added"
+git push
+```
+
+> Note: If you are on a branch (which you should be) which is not already on the remote repository, you may have to do `git push -u origin feat/name-of-branch`.
+
+#### Content Submodule
 
 **1. To make changes to the content submodule, first navigate there:**
 
