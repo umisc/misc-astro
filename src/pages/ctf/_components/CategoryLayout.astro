@@ -28,7 +28,7 @@ const { title, description, tags } = Astro.props;
       </div>
     </PageMasthead>
     <article
-      class="mx-auto prose w-full max-w-4xl prose-invert prose-headings:font-display prose-headings:text-foreground prose-a:underline-offset-4 prose-code:rounded prose-code:px-1 prose-code:py-0.5 prose-code:before:content-none prose-pre:overflow-x-auto prose-pre:border prose-pre:border-border prose-pre:bg-card! prose-pre:shadow-sm"
+      class="mx-auto prose w-full max-w-4xl prose-invert prose-headings:font-display prose-headings:text-foreground prose-a:underline-offset-4 prose-figure:mx-auto prose-figure:w-full prose-figure:max-w-[400px] prose-figure:text-center prose-code:rounded prose-code:px-1 prose-code:py-0.5 prose-code:before:content-none prose-pre:overflow-x-auto prose-pre:border prose-pre:border-border prose-pre:bg-card! prose-pre:shadow-sm prose-img:w-full prose-img:rounded-xl prose-img:border prose-img:border-border prose-img:shadow-lg [&_[data-slot=accordion-content]]:pb-4 [&_[data-slot=accordion-content]]:text-base [&_[data-slot=accordion-content]]:leading-7 [&_[data-slot=accordion-trigger-icon]]:size-5 [&_[data-slot=accordion-trigger]]:min-h-14 [&_[data-slot=accordion-trigger]]:py-4 [&_[data-slot=accordion-trigger]]:text-lg [&_[data-slot=accordion-trigger]]:font-bold"
     >
       <slot />
     </article>
