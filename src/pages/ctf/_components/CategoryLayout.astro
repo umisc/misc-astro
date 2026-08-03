@@ -13,10 +13,10 @@ type Props = {
 const { title, description, tags } = Astro.props;
 ---
 
-<BaseLayout title={`${title} — CTF Guide — MISC`}>
+<BaseLayout title={`${title} CTF Guide | MISC`} description={description}>
   <Container class="flex flex-col gap-page-section">
     <PageMasthead
-      breadcrumbs={[{ label: 'CTF Guide', href: '/ctf' }, { label: title }]}
+      breadcrumbs={[{ label: 'CTF Guide', href: '/ctf/' }, { label: title }]}
     >
       <div class="flex flex-col items-center gap-content">
         <PageIntro {title}>

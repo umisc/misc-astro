@@ -18,7 +18,10 @@ const guides = (await getCollection('ctf')).sort(
 );
 ---
 
-<BaseLayout title="CTF Guide — MISC">
+<BaseLayout
+  title="Beginner Capture the Flag (CTF) Guide | MISC"
+  description="Learn Capture the Flag cybersecurity fundamentals with MISC's beginner guides to web exploitation, cryptography, forensics, OSINT, reversing, and binary exploitation."
+>
   <Container class="flex flex-col gap-page-section">
     <PageMasthead breadcrumbs={[{ label: 'CTF Guide' }]}>
       <PageIntro title="CTF Guide" icon={FlagBannerFoldIcon}>
@@ -78,7 +81,7 @@ const guides = (await getCollection('ctf')).sort(
         {
           guides.map(({ id, data }) => (
             <CategoryCard
-              href={`/ctf/${id}`}
+              href={`/ctf/${id}/`}
               title={data.title}
               description={data.description}
               tags={data.tags}

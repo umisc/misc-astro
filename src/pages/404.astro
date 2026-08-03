@@ -1,0 +1,23 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/site/Container.astro';
+import Button from '@/components/ui/button';
+---
+
+<BaseLayout
+  title="Page not found | MISC"
+  description="The page you requested could not be found."
+  noindex
+  canonical={false}
+>
+  <Container
+    class="flex min-h-[60svh] flex-col items-center justify-center gap-content text-center"
+  >
+    <p class="font-display text-lg font-semibold text-primary">404</p>
+    <h1 class="font-display text-4xl font-bold sm:text-6xl">Page not found</h1>
+    <p class="max-w-prose text-muted-foreground">
+      The page may have moved, or the address may be incorrect.
+    </p>
+    <Button href="/" variant="matrix">Return home</Button>
+  </Container>
+</BaseLayout>
