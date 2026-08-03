@@ -108,3 +108,14 @@ Read the [Astro docs](https://docs.astro.build/en/getting-started/).
   - Come typed through an SDK.
   - Be an [Astro content collection](https://docs.astro.build/en/guides/content-collections/).
   - Validated at runtime using [Zod](https://zod.dev/).
+
+## Contribution Workflow
+
+1. Create or choose an issue for the work.
+2. Create a branch from the latest `main`. Use `<type>/<issue-number>-<short-description>`, for example `feat/123-name-of-branch` or `fix/456-mobile-menu`.
+3. Make and test your changes. Run `pnpm check` before committing.
+4. Write commits using [Conventional Commits](https://www.conventionalcommits.org/): `<type>(optional-scope): <description>`, for example `feat(nav): add mobile menu`. Common types include `feat`, `fix`, `docs`, `refactor`, `test`, and `chore`.
+5. Push your branch and open a pull request into `main`.
+6. Link the pull request to its issue using `Closes #123`, describe the changes and testing, then request review.
+
+`main` is protected: do not commit or push directly to it. All changes must be made on a branch and merged through a pull request.
