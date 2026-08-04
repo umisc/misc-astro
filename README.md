@@ -119,5 +119,9 @@ Read the [Astro docs](https://docs.astro.build/en/getting-started/).
 4. Write commits using [Conventional Commits](https://www.conventionalcommits.org/): `<type>(optional-scope): <description>`, for example `feat: add ctf guide`. Common types include `feat`, `fix`, `docs`, `refactor`, `test`, and `chore`.
 5. Push your branch and open a pull request into `main`.
 6. Link the pull request to its issue using `Closes #123`, describe the changes and testing, then request review.
+   1. When merging, prefer a fast-forward merge. This means:
+   1. Rebase your branch on main
+   1. Push your branch to GitHub and ensure it has an open PR with CI passing
+   1. Run `git checkout main` then `git merge feat/123-my-branch`. This should perform a fast-forward merge. Run `git push`, GitHub will permit the push since the commits have been approved via the PR.
 
-`main` is protected: do not commit or push directly to it. All changes must be made on a branch and merged through a pull request.
+`main` is protected: do not commit unapproved commits push directly to it. All commits must be made on a branch and approved through a pull request before moving to main.
