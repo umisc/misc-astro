@@ -114,11 +114,11 @@ Read the [Astro docs](https://docs.astro.build/en/getting-started/).
 ## Contribution Workflow
 
 1. Create or choose an issue for the work.
-2. Create a branch from the latest `main`. Use `<type>/<issue-number>-<short-description>`, for example `feat/123-name-of-branch` or `fix/456-name-of-branch`.
-3. Make and test your changes. Run `pnpm check` before committing.
-4. Write commits using [Conventional Commits](https://www.conventionalcommits.org/): `<type>(optional-scope): <description>`, for example `feat: add ctf guide`. Common types include `feat`, `fix`, `docs`, `refactor`, `test`, and `chore`.
-5. Push your branch and open a pull request into `main`.
-6. Link the pull request to its issue using `Closes #123`, describe the changes and testing, then request review.
+1. Create a branch from the latest `main`. Use `<type>/<issue-number>-<short-description>`, for example `feat/123-name-of-branch` or `fix/456-name-of-branch`.
+1. Make and test your changes. Run `pnpm check` before committing.
+1. Write commits using [Conventional Commits](https://www.conventionalcommits.org/): `<type>(optional-scope): <description>`, for example `feat: add ctf guide`. Common types include `feat`, `fix`, `docs`, `refactor`, `test`, and `chore`.
+1. Push your branch and open a pull request into `main`.
+1. Link the pull request to its issue using `Closes #123`, describe the changes and testing, then request review.
    1. When merging, prefer a fast-forward merge. This means:
    1. Rebase your branch on main
    1. Push your branch to GitHub and ensure it has an open PR with CI passing
