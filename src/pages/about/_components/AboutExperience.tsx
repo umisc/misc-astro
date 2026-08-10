@@ -166,7 +166,7 @@ function AboutContent({ members }: Props) {
                 target="_blank"
                 rel="noreferrer"
                 size="lg"
-                className="w-full sm:w-auto"
+                variant="matrix"
               >
                 Connect on LinkedIn
               </Button>
