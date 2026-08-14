@@ -41,8 +41,31 @@ if (!currentPage) {
     'SiteBreadcrumbs requires at least one breadcrumb for the current page.',
   );
 }
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    ...linkedItems.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.label,
+      item: new URL(item.href, Astro.site).href,
+    })),
+    {
+      '@type': 'ListItem',
+      position: linkedItems.length + 1,
+      name: currentPage.label,
+      item: new URL(Astro.url.pathname, Astro.site).href,
+    },
+  ],
+};
 ---
 
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify(breadcrumbSchema)}
+/>
 <Breadcrumb className={cn('pl-1', className)}>
   <BreadcrumbList className="gap-1.5">
     {

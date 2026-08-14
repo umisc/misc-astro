@@ -26,6 +26,7 @@ export default function CommunityPartnersTicker({
         loading="lazy"
         className="h-20 w-auto object-contain transition-transform duration-300 ease-in-out group-hover:scale-110 motion-reduce:transition-none"
       />
+      <span className="sr-only">{sponsor.name}</span>
     </a>
   ));
 

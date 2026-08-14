@@ -41,7 +41,8 @@ export default function PopInText({
               {Array.from(word).map((character, characterIndex) => (
                 <motion.span
                   key={`${character}-${characterIndex}`}
-                  className="inline-block"
+                  className="inline-block before:content-[attr(data-character)]"
+                  data-character={character}
                   variants={{
                     hidden: reducedMotion
                       ? { opacity: 1, y: 0 }
@@ -58,9 +59,7 @@ export default function PopInText({
                     },
                   }}
                   aria-hidden="true"
-                >
-                  {character}
-                </motion.span>
+                />
               ))}
             </span>
           ),

@@ -11,7 +11,7 @@ function CountUp({
   duration?: number;
 }) {
   const reducedMotion = useReducedMotion();
-  const [displayValue, setDisplayValue] = useState(0);
+  const [displayValue, setDisplayValue] = useState(value);
   const start = () => {
     if (reducedMotion) {
       setDisplayValue(value);

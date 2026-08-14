@@ -12,6 +12,7 @@ interface Props {
   description?: string;
   noindex?: boolean;
   canonical?: string | URL | false;
+  includeOrganizationSchema?: boolean;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   description = 'Join the Melbourne Information Security Club at the University of Melbourne for cybersecurity workshops, events, CTF competitions, and an inclusive student community.',
   noindex = false,
   canonical,
+  includeOrganizationSchema = false,
 } = Astro.props;
 
 const canonicalURL =
@@ -30,8 +32,11 @@ const organisationLogoURL = new URL(organisationLogo.src, Astro.site);
 const organisationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${new URL('/', Astro.site).href}#organization`,
   name: 'Melbourne Information Security Club',
   alternateName: 'MISC',
+  description:
+    'The University of Melbourne Information Security Club (MISC) provides an inclusive community for students building practical cybersecurity skills.',
   url: new URL('/', Astro.site).href,
   logo: {
     '@type': 'ImageObject',
@@ -90,11 +95,15 @@ const organisationSchema = {
       sizes="16x16 32x32 48x48"
     />
     <title>{title}</title>
-    <script
-      is:inline
-      type="application/ld+json"
-      set:html={JSON.stringify(organisationSchema)}
-    />
+    {
+      includeOrganizationSchema && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(organisationSchema)}
+        />
+      )
+    }
     <ClientRouter />
   </head>
   <body

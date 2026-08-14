@@ -54,17 +54,15 @@ export default function DecryptedText({
 
                 return (
                   <span
-                    className="relative inline-block"
+                    className={`relative inline-block before:invisible before:content-[attr(data-character)] ${className}`}
+                    data-character={finalCharacter}
                     key={`${index}-${finalCharacter}`}
                   >
-                    <span className={`invisible ${className}`}>
-                      {finalCharacter}
-                    </span>
                     <span
-                      className={`absolute top-0 left-0 whitespace-nowrap ${className}`}
-                    >
-                      {displayText[index]}
-                    </span>
+                      aria-hidden="true"
+                      className={`absolute top-0 left-0 whitespace-nowrap before:content-[attr(data-character)] ${className}`}
+                      data-character={displayText[index]}
+                    />
                   </span>
                 );
               })}
