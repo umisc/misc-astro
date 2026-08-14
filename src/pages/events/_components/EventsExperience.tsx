@@ -75,9 +75,7 @@ function EventsContent({ events }: Props) {
     return [...filtered].sort((a, b) =>
       sort === 'alphabetical'
         ? a.title.localeCompare(b.title)
-        : view === 'upcoming'
-          ? eventDateTimestamp(a.dateISO) - eventDateTimestamp(b.dateISO)
-          : eventDateTimestamp(b.dateISO) - eventDateTimestamp(a.dateISO),
+        : eventDateTimestamp(b.dateISO) - eventDateTimestamp(a.dateISO),
     );
   }, [events, view, query, sort, today]);
 
