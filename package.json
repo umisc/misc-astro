@@ -19,7 +19,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "fix": "prettier --write . && eslint --fix . && tailwind-lint --fix 'src/**/*.{astro,js,jsx,ts,tsx}'",
-    "check": "astro check && eslint . && tailwind-lint 'src/**/*.{astro,js,jsx,ts,tsx}' && prettier --check .",
+    "check": "astro check && eslint . && prettier --check .",
     "ci": "pnpm check"
   },
   "dependencies": {

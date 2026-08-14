@@ -15,6 +15,7 @@ jobs:
   deploy:
     name: Deploy production artifact
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: production
 
@@ -24,6 +25,10 @@ jobs:
         with:
           ref: ${{ github.event.repository.default_branch }}
           path: trusted-tooling
+          sparse-checkout: |
+            .github/deployment/package.json
+            .github/deployment/pnpm-lock.yaml
+          sparse-checkout-cone-mode: false
           persist-credentials: false
 
       - name: Set up pnpm
@@ -36,11 +41,11 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          cache-dependency-path: trusted-tooling/pnpm-lock.yaml
+          cache-dependency-path: trusted-tooling/.github/deployment/pnpm-lock.yaml
 
       - name: Install trusted deployment tooling
-        working-directory: trusted-tooling
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        working-directory: trusted-tooling/.github/deployment
+        run: pnpm install --prod --frozen-lockfile --ignore-scripts
 
       - name: Download prebuilt output
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -54,4 +59,4 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
-        run: ../trusted-tooling/node_modules/.bin/vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+        run: ../trusted-tooling/.github/deployment/node_modules/.bin/vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
