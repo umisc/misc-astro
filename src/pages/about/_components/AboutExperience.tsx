@@ -1,6 +1,5 @@
 import { ArrowUpRightIcon, UserCircleIcon } from '@phosphor-icons/react';
-import { NuqsAdapter } from 'nuqs/adapters/react';
-import { parseAsString, useQueryState } from 'nuqs';
+import { useRef } from 'react';
 import Button from '@/components/ui/button';
 import {
   Card,
@@ -10,38 +9,26 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useDialogRouteNavigation } from '@/hooks/useDialogRouteNavigation';
 
-type Member = {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  image?:
-    | {
-        src: string;
-        width: number;
-        height: number;
-      }
-    | undefined;
-  linkedin?: string | undefined;
+import type { MemberViewModel } from '../_lib/types';
+
+type Props = {
+  members: MemberViewModel[];
+  initialSelectedId?: string | null | undefined;
 };
-type Props = { members: Member[] };
 
-function AboutContent({ members }: Props) {
-  const [selectedId, setSelectedId] = useQueryState('member', parseAsString);
-  const member = members.find((person) => person.id === selectedId) ?? null;
-  const closeModal = () => {
-    void setSelectedId(null, { history: 'replace' });
-  };
-
-  useDocumentTitle(member ? `${member.name} — MISC Team` : 'About — MISC');
+function AboutContent({ members, initialSelectedId }: Props) {
+  const dialogPortalRef = useRef<HTMLDivElement>(null);
+  const dialogRoute = useDialogRouteNavigation('/about/');
+  const member =
+    members.find((person) => person.id === initialSelectedId) ?? null;
 
   return (
     <>
@@ -53,20 +40,10 @@ function AboutContent({ members }: Props) {
               variant="interactive"
               effect="pixel-shimmer"
               key={person.id}
-              href={`/about/?member=${encodeURIComponent(person.id)}`}
-              data-astro-reload
+              href={`/about/${encodeURIComponent(person.id)}/`}
               aria-labelledby={`member-card-title-${person.id}`}
-              onClick={(click) => {
-                if (
-                  click.button !== 0 ||
-                  click.metaKey ||
-                  click.ctrlKey ||
-                  click.shiftKey ||
-                  click.altKey
-                )
-                  return;
-                click.preventDefault();
-                void setSelectedId(person.id, { history: 'push' });
+              onClick={(event) => {
+                dialogRoute.open(event, event.currentTarget.href);
               }}
               className="flex flex-col text-center"
             >
@@ -125,17 +102,20 @@ function AboutContent({ members }: Props) {
           </Button>
         </div>
       </div>
+      <div ref={dialogPortalRef} className="contents" />
       <Dialog
         modal="trap-focus"
         open={member !== null}
         onOpenChange={(open) => {
-          if (!open) closeModal();
+          if (!open) dialogRoute.close();
         }}
       >
         {member && (
           <DialogContent
             aria-labelledby="profile-title"
             className="flex flex-col items-center gap-content text-center sm:max-w-lg"
+            portalContainer={dialogPortalRef}
+            serverRender={initialSelectedId != null}
           >
             {member.image ? (
               <img
@@ -179,9 +159,5 @@ function AboutContent({ members }: Props) {
 }
 
 export default function AboutExperience(props: Props) {
-  return (
-    <NuqsAdapter>
-      <AboutContent {...props} />
-    </NuqsAdapter>
-  );
+  return <AboutContent {...props} />;
 }

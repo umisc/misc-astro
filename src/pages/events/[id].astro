@@ -1,0 +1,30 @@
+---
+import type { GetStaticPaths } from 'astro';
+import EventsPage from './_components/EventsPage.astro';
+import { getEventViewModels } from './_lib/events';
+import { eventStructuredData } from './_lib/structured-data';
+
+export const getStaticPaths = (async () => {
+  const events = await getEventViewModels();
+
+  return events.map((event) => ({
+    params: { id: event.id },
+    props: { event, events },
+  }));
+}) satisfies GetStaticPaths;
+
+const { event, events } = Astro.props;
+const canonical = new URL(`/events/${event.id}/`, Astro.site);
+---
+
+<EventsPage
+  {events}
+  selectedId={event.id}
+  title={`${event.title} — MISC`}
+  description={event.description}
+  canonical={canonical}
+  socialImage={event.image.src}
+  socialImageAlt={event.title}
+  jsonLd={eventStructuredData(event, canonical)}
+  breadcrumbs={[{ label: 'Events', href: '/events/' }, { label: event.title }]}
+/>

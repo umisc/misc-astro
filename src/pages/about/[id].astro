@@ -1,0 +1,30 @@
+---
+import type { GetStaticPaths } from 'astro';
+import AboutPage from './_components/AboutPage.astro';
+import { getMemberViewModels } from './_lib/members';
+import { memberStructuredData } from './_lib/structured-data';
+
+export const getStaticPaths = (async () => {
+  const members = await getMemberViewModels();
+
+  return members.map((member) => ({
+    params: { id: member.id },
+    props: { member, members },
+  }));
+}) satisfies GetStaticPaths;
+
+const { member, members } = Astro.props;
+const canonical = new URL(`/about/${member.id}/`, Astro.site);
+---
+
+<AboutPage
+  {members}
+  selectedId={member.id}
+  title={`${member.name} — MISC Team`}
+  description={member.bio}
+  canonical={canonical}
+  socialImage={member.image?.src}
+  socialImageAlt={member.name}
+  jsonLd={memberStructuredData(member, canonical)}
+  breadcrumbs={[{ label: 'About', href: '/about/' }, { label: member.name }]}
+/>

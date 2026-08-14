@@ -1,0 +1,56 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/site/Container.astro';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import { CalendarDotsIcon } from '@phosphor-icons/react/ssr';
+import EventsExperience from './EventsExperience';
+import type { BreadcrumbTrail } from '@/components/site/SiteBreadcrumbs.astro';
+import type { EventViewModel } from '../_lib/types';
+
+interface Props {
+  events: EventViewModel[];
+  selectedId?: string | undefined;
+  title?: string;
+  description?: string;
+  canonical?: string | URL | false | undefined;
+  socialImage?: string | undefined;
+  socialImageAlt?: string | undefined;
+  jsonLd?:
+    Record<string, unknown> | readonly Record<string, unknown>[] | undefined;
+  breadcrumbs: BreadcrumbTrail;
+}
+
+const {
+  events,
+  selectedId,
+  title = 'Cybersecurity Events & Workshops | MISC',
+  description = 'Explore upcoming and past MISC cybersecurity workshops, social events, industry sessions, and practical security activities at the University of Melbourne.',
+  canonical,
+  socialImage,
+  socialImageAlt,
+  jsonLd,
+  breadcrumbs,
+} = Astro.props;
+---
+
+<BaseLayout
+  {title}
+  {description}
+  {canonical}
+  {socialImage}
+  {socialImageAlt}
+  {jsonLd}
+>
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead {breadcrumbs}>
+      <PageIntro title="Explore Our Events" icon={CalendarDotsIcon} />
+    </PageMasthead>
+    <EventsExperience
+      events={events}
+      initialSelectedId={selectedId}
+      client:load
+      transition:persist="events-experience"
+    />
+  </Container>
+</BaseLayout>

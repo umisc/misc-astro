@@ -4,14 +4,20 @@ import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '@/components/site/SiteHeader.astro';
 import SiteFooter from '@/components/site/SiteFooter.astro';
 import AuroraBackground from '@/components/effects/aurora/AuroraBackground.astro';
-import socialImage from '@/pages/_home/_assets/misc-head-fallback.webp';
+import defaultSocialImage from '@/pages/_home/_assets/misc-head-fallback.webp';
 import organisationLogo from '@/assets/brand/umisc-logo.png';
+
+type SocialImage = string | URL | { src: string };
+type JsonLdEntry = Record<string, unknown>;
 
 interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
-  canonical?: string | URL | false;
+  canonical?: string | URL | false | undefined;
+  socialImage?: SocialImage | undefined;
+  socialImageAlt?: string | undefined;
+  jsonLd?: JsonLdEntry | readonly JsonLdEntry[] | undefined;
   includeOrganizationSchema?: boolean;
 }
 
@@ -20,6 +26,9 @@ const {
   description = 'Join the Melbourne Information Security Club at the University of Melbourne for cybersecurity workshops, events, CTF competitions, and an inclusive student community.',
   noindex = false,
   canonical,
+  socialImage = defaultSocialImage,
+  socialImageAlt = 'Melbourne Information Security Club',
+  jsonLd,
   includeOrganizationSchema = false,
 } = Astro.props;
 
@@ -27,8 +36,15 @@ const canonicalURL =
   canonical === false
     ? undefined
     : new URL(canonical ?? Astro.url.pathname, Astro.site);
-const socialImageURL = new URL(socialImage.src, Astro.site);
+const socialImageSource =
+  typeof socialImage === 'string'
+    ? socialImage
+    : socialImage instanceof URL
+      ? socialImage.href
+      : socialImage.src;
+const socialImageURL = new URL(socialImageSource, Astro.site);
 const organisationLogoURL = new URL(organisationLogo.src, Astro.site);
+const jsonLdEntries = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 const organisationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -79,10 +95,7 @@ const organisationSchema = {
     <meta property="og:description" content={description} />
     {canonicalURL && <meta property="og:url" content={canonicalURL} />}
     <meta property="og:image" content={socialImageURL} />
-    <meta
-      property="og:image:alt"
-      content="Melbourne Information Security Club"
-    />
+    <meta property="og:image:alt" content={socialImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -103,6 +116,15 @@ const organisationSchema = {
           set:html={JSON.stringify(organisationSchema)}
         />
       )
+    }
+    {
+      jsonLdEntries.map((entry) => (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(entry)}
+        />
+      ))
     }
     <ClientRouter />
   </head>

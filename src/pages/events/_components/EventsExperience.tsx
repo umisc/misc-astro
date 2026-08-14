@@ -1,6 +1,6 @@
 import { NuqsAdapter } from 'nuqs/adapters/react';
-import { parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
-import { useMemo, useState } from 'react';
+import { parseAsStringEnum, useQueryState } from 'nuqs';
+import { useMemo, useRef, useState } from 'react';
 import { ArrowUpRightIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { Input } from '@/components/ui/input';
 import {
@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   NativeSelect,
@@ -24,6 +23,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useDialogRouteNavigation } from '@/hooks/useDialogRouteNavigation';
 import type { EventCategory, EventViewModel } from '../_lib/types';
 import {
   eventDateTimestamp,
@@ -32,7 +32,10 @@ import {
 } from '../_lib/event-dates';
 
 type SortOption = 'date' | 'alphabetical' | 'industry' | 'social' | 'workshop';
-type Props = { events: EventViewModel[] };
+type Props = {
+  events: EventViewModel[];
+  initialSelectedId?: string | null | undefined;
+};
 
 const categoryFilters: Partial<Record<SortOption, EventCategory>> = {
   industry: 'Industry',
@@ -40,22 +43,24 @@ const categoryFilters: Partial<Record<SortOption, EventCategory>> = {
   workshop: 'Workshop',
 };
 
-function EventsContent({ events }: Props) {
-  const [{ view, event: selectedId }, setQuery] = useQueryStates({
-    view: parseAsStringEnum(['upcoming', 'past'])
-      .withDefault('upcoming')
+function EventsContent({ events, initialSelectedId }: Props) {
+  const today = todayDateTimestamp();
+  const selected = events.find((item) => item.id === initialSelectedId) ?? null;
+  const defaultView =
+    selected && eventDateTimestamp(selected.dateISO) < today
+      ? ('past' as const)
+      : ('upcoming' as const);
+  const [view, setView] = useQueryState(
+    'view',
+    parseAsStringEnum(['upcoming', 'past'])
+      .withDefault(defaultView)
       .withOptions({ clearOnDefault: false }),
-    event: parseAsString,
-  });
+  );
+  const dialogPortalRef = useRef<HTMLDivElement>(null);
+  const dialogRoute = useDialogRouteNavigation('/events/');
   const [query, setSearchQuery] = useState('');
   const [sort, setSort] = useState<SortOption>('date');
-  const today = todayDateTimestamp();
-  const selected = events.find((item) => item.id === selectedId) ?? null;
-  const closeModal = () => {
-    void setQuery({ event: null }, { history: 'replace' });
-  };
-
-  useDocumentTitle(selected ? `${selected.title} — MISC` : 'Events — MISC');
+  const listingPath = view === 'past' ? '/events/?view=past' : '/events/';
 
   const shown = useMemo(() => {
     const filtered = events
@@ -88,19 +93,10 @@ function EventsContent({ events }: Props) {
           density="compact"
           effect="pixel-shimmer"
           key={item.id}
-          href={`/events/?view=${view}&event=${encodeURIComponent(item.id)}`}
+          href={`/events/${encodeURIComponent(item.id)}/`}
           aria-labelledby={`event-card-title-${item.id}`}
-          onClick={(click) => {
-            if (
-              click.button !== 0 ||
-              click.metaKey ||
-              click.ctrlKey ||
-              click.shiftKey ||
-              click.altKey
-            )
-              return;
-            click.preventDefault();
-            void setQuery({ event: item.id }, { history: 'push' });
+          onClick={(event) => {
+            dialogRoute.open(event, event.currentTarget.href);
           }}
           className="flex min-h-112.5 flex-col text-left"
         >
@@ -155,7 +151,7 @@ function EventsContent({ events }: Props) {
         value={view}
         onValueChange={(value) => {
           if (value === 'upcoming' || value === 'past') {
-            void setQuery({ view: value }, { history: 'push' });
+            void setView(value, { history: 'push' });
           }
         }}
         className="w-full gap-content"
@@ -222,15 +218,21 @@ function EventsContent({ events }: Props) {
           {eventResults}
         </TabsContent>
       </Tabs>
+      <div ref={dialogPortalRef} className="contents" />
       <Dialog
         modal="trap-focus"
         open={selected !== null}
         onOpenChange={(open) => {
-          if (!open) closeModal();
+          if (!open) dialogRoute.close(listingPath);
         }}
       >
         {selected && (
-          <DialogContent aria-labelledby="event-title" className="sm:max-w-3xl">
+          <DialogContent
+            aria-labelledby="event-title"
+            className="sm:max-w-3xl"
+            portalContainer={dialogPortalRef}
+            serverRender={initialSelectedId != null}
+          >
             <img
               src={selected.image.src}
               alt={selected.title}

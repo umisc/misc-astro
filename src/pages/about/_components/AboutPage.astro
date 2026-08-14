@@ -1,0 +1,56 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/site/Container.astro';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import { UsersIcon } from '@phosphor-icons/react/ssr';
+import AboutExperience from './AboutExperience';
+import type { BreadcrumbTrail } from '@/components/site/SiteBreadcrumbs.astro';
+import type { MemberViewModel } from '../_lib/types';
+
+interface Props {
+  members: MemberViewModel[];
+  selectedId?: string | undefined;
+  title?: string;
+  description?: string;
+  canonical?: string | URL | false | undefined;
+  socialImage?: string | undefined;
+  socialImageAlt?: string | undefined;
+  jsonLd?:
+    Record<string, unknown> | readonly Record<string, unknown>[] | undefined;
+  breadcrumbs: BreadcrumbTrail;
+}
+
+const {
+  members,
+  selectedId,
+  title = 'About MISC | Melbourne Information Security Club',
+  description = 'Meet the student team behind MISC and learn about the University of Melbourne community helping students build practical cybersecurity skills.',
+  canonical,
+  socialImage,
+  socialImageAlt,
+  jsonLd,
+  breadcrumbs,
+} = Astro.props;
+---
+
+<BaseLayout
+  {title}
+  {description}
+  {canonical}
+  {socialImage}
+  {socialImageAlt}
+  {jsonLd}
+>
+  <Container class="flex flex-col gap-page-section">
+    <PageMasthead {breadcrumbs}>
+      <PageIntro title="Meet Our Team" icon={UsersIcon} />
+    </PageMasthead>
+    <AboutExperience
+      members={members}
+      initialSelectedId={selectedId}
+      client:load
+      transition:persist="about-experience"
+    />
+  </Container>
+</BaseLayout>
