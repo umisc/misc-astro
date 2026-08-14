@@ -135,6 +135,7 @@ jobs:
       contents: read
       pull-requests: write # The reusable workflow updates one preview status comment.
     uses: umisc/misc-astro/.github/workflows/preview.yml@main
+    secrets: inherit
     with:
       artifact_name: vercel-output-${{ github.run_id }}
       pr_head_sha: ${{ github.event.pull_request.head.sha }}
@@ -147,5 +148,6 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/deploy.yml
+    secrets: inherit
     with:
       artifact_name: vercel-output-${{ github.run_id }}
