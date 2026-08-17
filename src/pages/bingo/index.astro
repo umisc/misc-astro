@@ -1,0 +1,30 @@
+---
+import { SquaresFourIcon } from '@phosphor-icons/react/ssr';
+import Container from '@/components/site/Container.astro';
+import PageIntro from '@/components/site/PageIntro.astro';
+import PageMasthead from '@/components/site/PageMasthead.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BingoExperience from './_components/BingoExperience';
+import { bingoConfig } from './_lib/config';
+---
+
+<BaseLayout
+  title={`${bingoConfig.eventName} — MISC`}
+  description={bingoConfig.subtitle}
+>
+  <Container class="flex max-w-5xl flex-col gap-page-section">
+    <PageMasthead breadcrumbs={[{ label: bingoConfig.eventName }]}>
+      <PageIntro title={bingoConfig.eventName} icon={SquaresFourIcon}>
+        {bingoConfig.subtitle}
+      </PageIntro>
+    </PageMasthead>
+    <BingoExperience client:only="react">
+      <p
+        slot="fallback"
+        class="rounded-2xl border border-border bg-card p-card text-center text-muted-foreground"
+      >
+        Loading your bingo board…
+      </p>
+    </BingoExperience>
+  </Container>
+</BaseLayout>
