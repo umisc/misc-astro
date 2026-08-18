@@ -9,6 +9,8 @@ on:
       - main
     paths-ignore:
       - README.md
+      - LICENSE
+      - .gitignore
 
 permissions:
   contents: read
