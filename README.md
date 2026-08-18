@@ -61,6 +61,8 @@ git commit -m "feat: write a descriptive message of what you added"
 git push
 ```
 
+After you have pushed your branch to remote, follow the [contribution workflow](#contribution-workflow) for further instructions.
+
 > Note: If you are on a branch (which you should be) which is not already on the remote repository, you may have to do `git push -u origin feat/name-of-branch`.
 
 #### Content Submodule
@@ -81,14 +83,25 @@ git push
 
 > If `git push` does not work, you may have to do `git push origin HEAD:main` instead.
 
-**3. Then, you must bump the submodule commit hash in the root repo:**
+**3. Wait for PR bot and then merge:**
 
+You can navigate back to the root directory with `cd ..`.
+
+Then, wait for the PR bot to auto-create a PR to bump the content submodule. After a few minutes you should see a PR in the repository's pull requests tab.
+
+Once all checks pass, merge using "Squash and merge", not "Merge commit".
+
+##### Without the PR bot
+In the event that the PR bot does not work or it has been disabled, follow these instructions.
+
+After step 6, add, commit, and push the updated submodule reference:
 ```sh
-cd ..
 git add content
 git commit -m "chore: bump content"
 git push
 ```
+
+Ensure that you are on a separate branch when pushing. Afterwards, make a PR and name it, `chore: bump content submodule`. Wait for checks to pass and then merge via "Squash and merge".
 
 ## Using Astro
 
