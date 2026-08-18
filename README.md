@@ -92,9 +92,11 @@ Then, wait for the PR bot to auto-create a PR to bump the content submodule. Aft
 Once all checks pass, merge using "Squash and merge", not "Merge commit".
 
 ##### Without the PR bot
+
 In the event that the PR bot does not work or it has been disabled, follow these instructions.
 
 After step 6, add, commit, and push the updated submodule reference:
+
 ```sh
 git add content
 git commit -m "chore: bump content"
