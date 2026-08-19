@@ -14,9 +14,12 @@ import {
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from '@/components/ui/native-select';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -34,6 +37,13 @@ import {
 type SortOption = 'date' | 'alphabetical' | 'industry' | 'social' | 'workshop';
 type Props = { events: EventViewModel[] };
 
+const sortLabels: Record<SortOption, string> = {
+  date: 'Date',
+  alphabetical: 'Alphabetical',
+  industry: 'Industry',
+  social: 'Social',
+  workshop: 'Workshop',
+};
 const categoryFilters: Partial<Record<SortOption, EventCategory>> = {
   industry: 'Industry',
   social: 'Social',
@@ -182,38 +192,35 @@ function EventsContent({ events }: Props) {
                 setSearchQuery(event.target.value);
               }}
               placeholder="Search events"
-              className="h-12 pr-4 pl-11"
+              className="h-12 pr-4 pl-11 focus-visible:border-primary/70 focus-visible:shadow-[0_0_12px] focus-visible:ring-0 focus-visible:shadow-primary/20 focus-visible:ring-offset-0"
             />
           </label>
-          <label className="flex flex-1 basis-auto items-center justify-between gap-cluster text-left">
-            <span className="sr-only">Filter and sort</span>
-            <NativeSelect
-              id="event-sort"
+          <div className="flex w-full items-center text-left sm:w-48 sm:flex-none">
+            <Select
+              items={sortLabels}
               value={sort}
-              onChange={(event) => {
-                const value = event.target.value;
-                if (
-                  value === 'date' ||
-                  value === 'alphabetical' ||
-                  value === 'industry' ||
-                  value === 'social' ||
-                  value === 'workshop'
-                ) {
+              onValueChange={(value) => {
+                if (value) {
                   setSort(value);
                 }
               }}
-              size="lg"
-              className="w-full"
             >
-              <NativeSelectOption value="date">Date</NativeSelectOption>
-              <NativeSelectOption value="alphabetical">
-                Alphabetical
-              </NativeSelectOption>
-              <NativeSelectOption value="industry">Industry</NativeSelectOption>
-              <NativeSelectOption value="social">Social</NativeSelectOption>
-              <NativeSelectOption value="workshop">Workshop</NativeSelectOption>
-            </NativeSelect>
-          </label>
+              <SelectTrigger
+                id="event-sort"
+                aria-label="Filter and sort events"
+                className="w-full px-3 data-[size=default]:h-12"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent align="start" alignItemWithTrigger={false}>
+                <SelectItem value="date">Date</SelectItem>
+                <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                <SelectItem value="industry">Industry</SelectItem>
+                <SelectItem value="social">Social</SelectItem>
+                <SelectItem value="workshop">Workshop</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <TabsContent value="upcoming" className="text-left">
           {eventResults}
