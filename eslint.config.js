@@ -46,6 +46,12 @@ export default defineConfig(
     },
   },
   {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
     files: ['**/*.{jsx,tsx}'],
     ...react.configs.flat.recommended,
     settings: {

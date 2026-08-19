@@ -22,7 +22,6 @@ const events = defineCollection({
       modalDescription: z.string(),
       category: z.enum(['Workshop', 'Social', 'Industry']),
       image: image(),
-      legacyId: z.number(),
     }),
 });
 

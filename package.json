@@ -18,6 +18,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "event:add": "node scripts/add-event.mjs",
     "fix": "prettier --write . && eslint --fix . && tailwind-lint --fix 'src/**/*.{astro,js,jsx,ts,tsx}'",
     "check": "astro check && eslint . && prettier --check .",
     "ci": "pnpm check"

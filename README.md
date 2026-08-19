@@ -49,6 +49,18 @@ git pull --recurse-submodules
 git submodule update --init --recursive
 ```
 
+#### Adding an Event
+
+Place the event image in `content/images/events`, then run this command from the
+root directory:
+
+```sh
+pnpm event:add
+```
+
+The command prompts for the event details, previews the finished record, and
+appends it to `content/events.json`. An ID is derived from the title and date, dates are converted to ISO format, image file path is checked to see if it exists. The script keeps events sorted.
+
 #### Root Repository
 
 To make changes to the root repository, the standard add, commit, push flow applies.
