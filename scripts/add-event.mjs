@@ -19,7 +19,7 @@ Options:
   --category <Workshop|Social|Industry>
   --image <filename|relative-path>
   --description <card-description>
-  --details <full-description>
+  --modal-description <modal-description>
   --yes, -y                         Skip the confirmation
   --dry-run                         Preview without changing events.json
   --help, -h                        Show this help
@@ -34,6 +34,7 @@ function parseOptions() {
       category: { type: 'string' },
       image: { type: 'string' },
       description: { type: 'string' },
+      'modal-description': { type: 'string' },
       details: { type: 'string' },
       yes: { type: 'boolean', short: 'y' },
       'dry-run': { type: 'boolean' },
@@ -147,31 +148,45 @@ async function promptUntilValid(readline, label, initialValue, normalize) {
   }
 }
 
-async function promptForDetails(readline, initialValue, description) {
+async function promptForModalDescription(readline, initialValue) {
   if (initialValue !== undefined) {
-    return initialValue.trim() || description;
+    const modalDescription = initialValue.trim();
+
+    if (!modalDescription) {
+      throw new Error('Enter a modal description.');
+    }
+
+    return modalDescription;
   }
 
-  console.log(
-    'Full description: enter or paste multiple lines, then enter a line containing only ".".',
-  );
-  console.log('Enter "." immediately to reuse the card description.');
+  console.log('\nModal description (shown in the event details):');
+  console.log('Paste or enter the complete text below.');
+  console.log('When finished, type END on a new line and press Return.');
 
-  process.stdout.write('> ');
-
-  return new Promise((resolveDetails) => {
+  return new Promise((resolveModalDescription, rejectModalDescription) => {
     const lines = [];
 
     const finish = () => {
-      readline.off('line', collectLine);
-      readline.off('close', finish);
+      const modalDescription = lines.join('\n').trim();
 
-      const details = lines.join('\n').trim();
-      resolveDetails(details || description);
+      if (!modalDescription) {
+        console.error('  Enter a modal description before END.');
+        return;
+      }
+
+      readline.off('line', collectLine);
+      readline.off('close', finishOnClose);
+      resolveModalDescription(modalDescription);
     };
 
     const collectLine = (line) => {
-      if (line === '.') {
+      const normalizedLine = line.trim().toLowerCase();
+
+      if (
+        normalizedLine === 'end' ||
+        normalizedLine === ':done' ||
+        normalizedLine === '.'
+      ) {
         finish();
         return;
       }
@@ -179,8 +194,20 @@ async function promptForDetails(readline, initialValue, description) {
       lines.push(line);
     };
 
+    const finishOnClose = () => {
+      readline.off('line', collectLine);
+      const modalDescription = lines.join('\n').trim();
+
+      if (!modalDescription) {
+        rejectModalDescription(new Error('Enter a modal description.'));
+        return;
+      }
+
+      resolveModalDescription(modalDescription);
+    };
+
     readline.on('line', collectLine);
-    readline.once('close', finish);
+    readline.once('close', finishOnClose);
   });
 }
 
@@ -266,7 +293,7 @@ async function main() {
     const image = await promptForImage(readline, options.image, eventsFile);
     const description = await promptUntilValid(
       readline,
-      'Card description: ',
+      'Description (shown on the event card, one line): ',
       options.description,
       (value) => {
         const description = value.trim();
@@ -274,10 +301,9 @@ async function main() {
         return description;
       },
     );
-    const modalDescription = await promptForDetails(
+    const modalDescription = await promptForModalDescription(
       readline,
-      options.details,
-      description,
+      options['modal-description'] ?? options.details,
     );
     const event = {
       id: createUniqueId(events, dateISO, title),
