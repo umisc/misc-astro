@@ -62,7 +62,7 @@
     "eslint-plugin-astro": "^3.1.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-tailwindcss": "^4.2.0",
+    "eslint-plugin-tailwindcss": "^4.3.0",
     "globals": "^17.11.0",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
@@ -70,6 +70,6 @@
     "tailwind-lint": "^0.12.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.67.0",
-    "vercel": "59.0.0"
+    "vercel": "59.3.0"
   }
 }
