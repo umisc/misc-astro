@@ -315,7 +315,7 @@ export default function BingoExperience() {
         </section>
 
         <section aria-label="People Bingo board">
-          <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
             {state.board.map((square, index) => (
               <BingoSquare
                 key={`${index}-${square.prompt}`}
