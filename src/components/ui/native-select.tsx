@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const nativeSelectVariants = cva(
-  'w-full min-w-0 appearance-none rounded-lg border border-input bg-glass px-3 pr-9 text-sm text-foreground transition-colors outline-none select-none selection:bg-primary selection:text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed motion-reduce:transition-none',
+  'w-full min-w-0 appearance-none rounded-lg border border-input bg-glass px-3 pr-9 text-base text-foreground transition-colors outline-none select-none selection:bg-primary selection:text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:cursor-not-allowed motion-reduce:transition-none',
   {
     variants: {
       size: {
