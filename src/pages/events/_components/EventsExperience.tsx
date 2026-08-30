@@ -1,6 +1,6 @@
 import { NuqsAdapter } from 'nuqs/adapters/react';
 import { parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { ArrowUpRightIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { Input } from '@/components/ui/input';
 import {
@@ -49,6 +49,38 @@ const categoryFilters: Partial<Record<SortOption, EventCategory>> = {
   social: 'Social',
   workshop: 'Workshop',
 };
+
+function EventDescription({ description }: { description: string }) {
+  const parts: ReactNode[] = [];
+  const linkPattern =
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s]+)/g;
+  let lastIndex = 0;
+
+  for (const match of description.matchAll(linkPattern)) {
+    const [text, alias, aliasedUrl, bareUrl] = match;
+    const index = match.index;
+    const url = aliasedUrl ?? bareUrl;
+
+    if (!url) continue;
+
+    parts.push(description.slice(lastIndex, index));
+    parts.push(
+      <a
+        key={`${url}-${index}`}
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="text-primary underline underline-offset-4 hover:text-foreground"
+      >
+        {alias ?? url}
+      </a>,
+    );
+    lastIndex = index + text.length;
+  }
+
+  parts.push(description.slice(lastIndex));
+  return <>{parts}</>;
+}
 
 function EventsContent({ events }: Props) {
   const [{ view, event: selectedId }, setQuery] = useQueryStates({
@@ -259,7 +291,7 @@ function EventsContent({ events }: Props) {
               {selected.title}
             </DialogTitle>
             <DialogDescription className="leading-7 whitespace-pre-wrap text-muted-foreground">
-              {selected.modalDescription}
+              <EventDescription description={selected.modalDescription} />
             </DialogDescription>
           </DialogContent>
         )}
