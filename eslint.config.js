@@ -19,6 +19,7 @@ export default defineConfig(
       'dist/**',
       '.vercel/**',
       '.astro/**',
+      '.wrangler/**',
       '.pi-subagents/**',
       'node_modules/**',
       'content/**',

@@ -6,6 +6,6 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
-    "vercel": "58.7.1"
+    "wrangler": "4.127.1"
   }
 }

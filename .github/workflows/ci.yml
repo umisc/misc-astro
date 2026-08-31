@@ -107,10 +107,10 @@ jobs:
       - name: Run checks
         run: pnpm run ci
 
-      - name: Build Vercel output
+      - name: Build Cloudflare output
         run: pnpm build
 
-      - name: Upload Vercel output
+      - name: Upload Cloudflare output
         if: >-
           github.event_name == 'push' ||
           (
@@ -121,8 +121,8 @@ jobs:
           )
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: vercel-output-${{ github.run_id }}
-          path: .vercel/output
+          name: cloudflare-output-${{ github.run_id }}
+          path: dist
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 1
@@ -141,7 +141,7 @@ jobs:
     uses: umisc/misc-astro/.github/workflows/preview.yml@main
     secrets: inherit
     with:
-      artifact_name: vercel-output-${{ github.run_id }}
+      artifact_name: cloudflare-output-${{ github.run_id }}
       pr_head_sha: ${{ github.event.pull_request.head.sha }}
       pr_number: ${{ github.event.pull_request.number }}
 
@@ -154,4 +154,4 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     with:
-      artifact_name: vercel-output-${{ github.run_id }}
+      artifact_name: cloudflare-output-${{ github.run_id }}

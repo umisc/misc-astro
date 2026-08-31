@@ -1,10 +1,10 @@
-name: Deploy Vercel Preview
+name: Deploy Cloudflare Preview
 
 on:
   workflow_call:
     inputs:
       artifact_name:
-        description: Name of the prebuilt Vercel output artifact
+        description: Name of the prebuilt Cloudflare output artifact
         required: true
         type: string
       pr_head_sha:
@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: vercel-preview-${{ inputs.pr_number }}
+  group: cloudflare-preview-${{ inputs.pr_number }}
   cancel-in-progress: true
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
     environment:
       name: preview
     outputs:
-      url: ${{ steps.deploy.outputs.url }}
+      url: ${{ steps.preview-url.outputs.url }}
 
     steps:
       - name: Checkout trusted deployment tooling
@@ -61,28 +61,27 @@ jobs:
 
       - name: Install trusted deployment tooling
         working-directory: trusted-tooling/.github/deployment
-        run: pnpm install --prod --frozen-lockfile --ignore-scripts
+        run: pnpm install --frozen-lockfile --prod --ignore-scripts
 
       - name: Download prebuilt output
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ inputs.artifact_name }}
-          path: deployment/.vercel/output
+          path: deployment/dist
 
-      - name: Deploy prebuilt artifact
-        id: deploy
-        working-directory: deployment
+      - name: Upload preview version
         env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_TOKEN: ${{ secrets.MISCVERCELHOSTING }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          WRANGLER_OUTPUT_FILE_PATH: deployment/wrangler-output.ndjson
+        run: trusted-tooling/.github/deployment/node_modules/.bin/wrangler versions upload --config deployment/dist/server/wrangler.json --name misc-astro --preview-alias pr-${{ inputs.pr_number }}
+
+      - name: Read preview URL
+        id: preview-url
+        shell: bash
         run: |
-          deployment_url="$(../trusted-tooling/.github/deployment/node_modules/.bin/vercel deploy --prebuilt --token="$VERCEL_TOKEN" | tail -n 1)"
-          if [[ ! "$deployment_url" =~ ^https://[a-zA-Z0-9.-]+\.vercel\.app$ ]]; then
-            echo "Vercel returned an invalid deployment URL." >&2
-            exit 1
-          fi
-          echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
+          preview_url="$(jq -er 'select(.type == "version-upload") | .preview_alias_url' deployment/wrangler-output.ndjson)"
+          echo "url=$preview_url" >> "$GITHUB_OUTPUT"
 
   comment:
     name: Update preview comment
@@ -104,7 +103,7 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
-            const marker = '<!-- misc-vercel-preview -->';
+            const marker = '<!-- misc-cloudflare-preview -->';
             const { owner, repo } = context.repo;
             const issue_number = Number(process.env.PR_NUMBER);
             const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
@@ -112,12 +111,11 @@ jobs:
             const shortCommit = commit.slice(0, 7);
             const commitUrl = `${context.serverUrl}/${owner}/${repo}/commit/${commit}`;
             const url = process.env.DEPLOYMENT_URL;
-            const validUrl = /^https:\/\/[a-zA-Z0-9.-]+\.vercel\.app$/.test(url);
 
-            const succeeded = process.env.DEPLOYMENT_OUTCOME === 'success' && validUrl;
+            const succeeded = process.env.DEPLOYMENT_OUTCOME === 'success';
             const body = succeeded
-              ? `${marker}\n### Vercel preview ready\n\nDeployed [\`${shortCommit}\`](${commitUrl}) to [${url}](${url}).`
-              : `${marker}\n### Vercel preview failed\n\nThe preview for [\`${shortCommit}\`](${commitUrl}) did not deploy. [View the failed workflow run](${runUrl}).`;
+              ? `${marker}\n### Cloudflare preview ready\n\nDeployed [\`${shortCommit}\`](${commitUrl}) to [${url}](${url}).`
+              : `${marker}\n### Cloudflare preview failed\n\nThe preview for [\`${shortCommit}\`](${commitUrl}) did not deploy. [View the failed workflow run](${runUrl}).`;
 
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner,
