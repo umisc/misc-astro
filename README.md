@@ -121,6 +121,22 @@ Ensure that you are on a separate branch when pushing. Afterwards, make a PR and
 
 Read the [Astro docs](https://docs.astro.build/en/getting-started/).
 
+## Cloudflare deployments
+
+GitHub Actions deploys pushes to `main` to the `misc-astro` Cloudflare Worker.
+Pull requests from branches in this repository receive a non-production preview
+at a stable `pr-<number>` Workers preview URL.
+
+Configure these GitHub Actions secrets in both the `production` and `preview`
+environments before enabling deployments:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+
+The API token needs permission to edit Workers Scripts. The custom production
+domain is deliberately not declared in `wrangler.jsonc`; add and validate the
+route only when traffic is ready to move away from the existing Vercel deployment.
+
 ## Repository Rules
 
 - `useEffect` and `useLayoutEffect` are banned in component files apart from in circumstances where you cannot refactor into a reusable hook that could conceivably be used by another component.
