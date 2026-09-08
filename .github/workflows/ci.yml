@@ -191,6 +191,7 @@ jobs:
     needs: [check-and-build, gates]
     permissions:
       contents: read
+      pull-requests: write
     uses: ./.github/workflows/deploy-worker.yml
     secrets: inherit
     with:
