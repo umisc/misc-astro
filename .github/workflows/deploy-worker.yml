@@ -52,9 +52,20 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
     steps:
+      - name: Checkout trusted workflow actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: umisc/misc-astro
+          ref: main
+          path: trusted-workflow
+          sparse-checkout: |
+            .github/actions/setup-wrangler
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
       - name: Set up trusted Wrangler
         id: wrangler
-        uses: ./.github/actions/setup-wrangler
+        uses: ./trusted-workflow/.github/actions/setup-wrangler
 
       - name: Download prebuilt output
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
