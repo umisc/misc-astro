@@ -30,6 +30,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: cloudflare-deploy-${{ inputs.environment }}-pr-${{ inputs.pr_number }}
