@@ -17,11 +17,11 @@ on:
         type: string
       preview_alias:
         description: Preview alias for versions upload; empty means production deploy
-        default: ""
+        default: ''
         type: string
       pr_head_sha:
         description: Pull request head commit (preview only)
-        default: ""
+        default: ''
         type: string
       pr_number:
         description: Pull request number (preview only)
