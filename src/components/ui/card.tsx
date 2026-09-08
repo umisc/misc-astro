@@ -1,6 +1,6 @@
 import {
   createContext,
-  useContext,
+  use,
   useRef,
   type ComponentPropsWithoutRef,
   type ReactNode,
@@ -9,7 +9,7 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority';
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useInView } from 'motion/react';
-import { useActivationOrigin } from '@/hooks/useActivationOrigin';
+import { createActivationHandlers } from '@/hooks/useActivationOrigin';
 import { useHoverFocusWithin } from '@/hooks/useHoverFocusWithin';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useMergedRef } from '@/hooks/useMergedRef';
@@ -76,7 +76,7 @@ function PixelShimmerCard({ ref, ...props }: CardProps) {
   const inView = useInView(rootRef, { amount: 0.55 });
   const active = focusWithin || (hasFinePointer ? hovered : inView);
   const { canvasRef, burstAt } = usePixelShimmer({ active, entryOrigin });
-  const activationProps = useActivationOrigin(burstAt);
+  const activationProps = createActivationHandlers(burstAt);
   const mergedProps = mergeProps<'div'>(
     props as ComponentPropsWithoutRef<'div'>,
     interactionProps,
@@ -201,7 +201,7 @@ export function CardHeader({
   density: densityOverride,
   ...props
 }: CardSectionProps) {
-  const inheritedDensity = useContext(CardDensityContext);
+  const inheritedDensity = use(CardDensityContext);
   const density = densityOverride ?? inheritedDensity;
   return (
     <div
@@ -219,7 +219,7 @@ export function CardContent({
   density: densityOverride,
   ...props
 }: CardSectionProps) {
-  const inheritedDensity = useContext(CardDensityContext);
+  const inheritedDensity = use(CardDensityContext);
   const density = densityOverride ?? inheritedDensity;
   return (
     <div
@@ -233,7 +233,7 @@ export function CardFooter({
   density: densityOverride,
   ...props
 }: CardSectionProps) {
-  const inheritedDensity = useContext(CardDensityContext);
+  const inheritedDensity = use(CardDensityContext);
   const density = densityOverride ?? inheritedDensity;
   return (
     <div

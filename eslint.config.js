@@ -1,7 +1,7 @@
 import eslint from '@eslint/js';
+import eslintReact from '@eslint-react/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import astroPlugin from 'eslint-plugin-astro';
-import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import tailwindcss from 'eslint-plugin-tailwindcss';
 import globals from 'globals';
@@ -10,7 +10,7 @@ import tseslint from 'typescript-eslint';
 const astroConfigs = astroPlugin.configs['flat/recommended'];
 const reactHooksRecommended = {
   plugins: { 'react-hooks': reactHooks },
-  rules: reactHooks.configs.recommended.rules,
+  rules: reactHooks.configs['recommended-latest'].rules,
 };
 
 export default defineConfig(
@@ -53,34 +53,15 @@ export default defineConfig(
     },
   },
   {
-    files: ['**/*.{jsx,tsx}'],
-    ...react.configs.flat.recommended,
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
+    files: ['**/*.{js,jsx}'],
+    extends: [eslintReact.configs.recommended],
   },
   {
-    files: ['**/*.{jsx,tsx}'],
-    ...react.configs.flat['jsx-runtime'],
+    files: ['**/*.{ts,tsx}'],
+    extends: [eslintReact.configs['recommended-typescript']],
   },
   {
-    files: ['**/*.{jsx,tsx}'],
+    files: ['**/*.{js,jsx,ts,tsx}'],
     ...reactHooksRecommended,
-  },
-  {
-    files: [
-      'src/components/effects/aurora/**/*.{jsx,tsx}',
-      'src/pages/_home/_components/MiscHead.tsx',
-    ],
-    rules: {
-      'react/no-unknown-property': [
-        'error',
-        {
-          ignore: ['attach', 'frustumCulled', 'geometry', 'object'],
-        },
-      ],
-    },
   },
 );

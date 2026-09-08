@@ -13,6 +13,9 @@ export default defineConfig({
   trailingSlash: 'always',
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ['astro-embed'],
+    },
   },
   integrations: [
     mdx(),

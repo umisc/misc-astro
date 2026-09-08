@@ -17,8 +17,8 @@ export default function SQLInjectionChallenge() {
   const [password, setPassword] = useState('');
   const [result, setResult] = useState<'success' | 'fail' | null>(null);
   const [showHint, setShowHint] = useState(false);
-  const celebrated = useRef(false);
-  const root = useRef<HTMLDivElement>(null);
+  const celebratedRef = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
 
   function submit(event: SyntheticEvent<HTMLFormElement>) {
@@ -28,9 +28,9 @@ export default function SQLInjectionChallenge() {
       /\w+'\s*or\s+['"]?1['"]?\s*=\s*['"]?1/i.test(username) ||
       /'\s*or\s+.+=.+/i.test(username);
     setResult(bypassed ? 'success' : 'fail');
-    if (!bypassed || celebrated.current || reducedMotion) return;
-    celebrated.current = true;
-    const rect = root.current?.getBoundingClientRect();
+    if (!bypassed || celebratedRef.current || reducedMotion) return;
+    celebratedRef.current = true;
+    const rect = rootRef.current?.getBoundingClientRect();
     burstConfetti({
       particleCount: 150,
       spread: 80,
@@ -43,7 +43,7 @@ export default function SQLInjectionChallenge() {
   }
 
   return (
-    <div ref={root}>
+    <div ref={rootRef}>
       <Card className="max-w-2xl">
         <CardHeader>
           <CardTitle>Simple Login Bypass</CardTitle>

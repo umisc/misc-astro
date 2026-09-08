@@ -1,11 +1,9 @@
 import { useAnimationFrame, useInView, usePageInView } from 'motion/react';
 import {
-  Children,
   type FocusEvent,
   type PointerEvent,
   type ReactNode,
   useCallback,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -84,12 +82,12 @@ export function Ticker({
   hoverPauseDuration = 400,
   className,
 }: TickerProps) {
-  const children = useMemo(() => Children.toArray(items), [items]);
+  const children = items;
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const originalRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const itemRefs = useRef<Array<Array<HTMLDivElement | null>>>([]);
+  const originalsRef = useRef<Array<HTMLDivElement | null>>([]);
+  const itemsRef = useRef<Array<Array<HTMLDivElement | null>>>([]);
 
   const [layout, setLayout] = useState<Layout | null>(null);
   const layoutRef = useRef<Layout | null>(null);
@@ -111,7 +109,7 @@ export function Ticker({
       const range = item.copies * current.cycle;
 
       for (let copy = 0; copy < item.copies; copy += 1) {
-        const element = itemRefs.current[itemIndex]?.[copy];
+        const element = itemsRef.current[itemIndex]?.[copy];
         if (!element) continue;
 
         const position = wrap(
@@ -128,7 +126,7 @@ export function Ticker({
   const measure = useCallback(() => {
     const viewport = viewportRef.current;
     const track = trackRef.current;
-    const originals = children.map((_, index) => originalRefs.current[index]);
+    const originals = children.map((_, index) => originalsRef.current[index]);
 
     if (!viewport || !track || originals.some((item) => !item)) return;
 
@@ -171,7 +169,7 @@ export function Ticker({
     () => [
       viewportRef.current,
       trackRef.current,
-      ...originalRefs.current.slice(0, children.length),
+      ...originalsRef.current.slice(0, children.length),
     ],
     [children.length],
   );
@@ -216,7 +214,7 @@ export function Ticker({
       if (clone) {
         const itemIndex = Number(clone.dataset.tickerItem);
         const originalLink =
-          originalRefs.current[itemIndex]?.querySelector<HTMLAnchorElement>(
+          originalsRef.current[itemIndex]?.querySelector<HTMLAnchorElement>(
             'a[href]',
           );
 
@@ -308,11 +306,12 @@ export function Ticker({
       >
         {children.map((child, itemIndex) => (
           <div
+            // eslint-disable-next-line @eslint-react/no-array-index-key
             key={`original-${itemIndex}`}
             ref={(element) => {
-              originalRefs.current[itemIndex] = element;
-              itemRefs.current[itemIndex] ??= [];
-              itemRefs.current[itemIndex][0] = element;
+              originalsRef.current[itemIndex] = element;
+              itemsRef.current[itemIndex] ??= [];
+              itemsRef.current[itemIndex][0] = element;
             }}
             className="shrink-0 will-change-transform"
             data-ticker-item={itemIndex}
@@ -330,10 +329,11 @@ export function Ticker({
 
               return (
                 <div
+                  // eslint-disable-next-line @eslint-react/no-array-index-key
                   key={`clone-${itemIndex}-${copy}`}
                   ref={(element) => {
-                    itemRefs.current[itemIndex] ??= [];
-                    itemRefs.current[itemIndex][copy] = element;
+                    itemsRef.current[itemIndex] ??= [];
+                    itemsRef.current[itemIndex][copy] = element;
                     if (element) {
                       // Clone links stay pointer-interactive while the original
                       // links alone remain in the accessibility tree and tab order.

@@ -39,7 +39,7 @@ export default function DecryptedText({
       {...props}
     >
       <span aria-hidden="true">
-        {tokens.map((match, tokenIndex) => {
+        {tokens.map((match) => {
           const token = match[0];
           const tokenStart = match.index;
 
@@ -48,7 +48,7 @@ export default function DecryptedText({
           }
 
           return (
-            <span className="inline-block" key={`${tokenStart}-${tokenIndex}`}>
+            <span className="inline-block" key={tokenStart}>
               {token.split('').map((finalCharacter, wordIndex) => {
                 const index = tokenStart + wordIndex;
 

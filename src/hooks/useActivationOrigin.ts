@@ -1,7 +1,7 @@
 import { type MouseEventHandler, type PointerEventHandler } from 'react';
 import type { Point } from '@/types/geometry';
 
-export function useActivationOrigin(onActivate: (origin: Point) => void) {
+export function createActivationHandlers(onActivate: (origin: Point) => void) {
   const onPointerDown: PointerEventHandler<HTMLElement> = (event) => {
     if (event.button === 0) {
       const rect = event.currentTarget.getBoundingClientRect();
