@@ -44,7 +44,7 @@ export function burstConfetti({
     position: 'fixed',
     zIndex: '9999',
   });
-  document.body.append(canvas);
+  document.body.appendChild(canvas);
 
   const resize = () => {
     const scale = window.devicePixelRatio || 1;

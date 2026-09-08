@@ -16,12 +16,17 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:preview": "CLOUDFLARE_ENV=preview astro build",
+    "build:production": "CLOUDFLARE_ENV=production astro build",
     "preview": "astro preview",
     "astro": "astro",
     "event:add": "node scripts/add-event.mjs",
     "fix": "prettier --write . && eslint --fix . && tailwind-lint --fix 'src/**/*.{astro,js,jsx,ts,tsx}'",
     "check": "astro check && eslint . --max-warnings 0 && prettier --check .",
-    "ci": "pnpm check"
+    "ci": "pnpm check",
+    "db:migrate:local": "wrangler d1 migrations apply misc-astro-dev --local",
+    "db:execute:local": "wrangler d1 execute misc-astro-dev --local",
+    "cf:types": "wrangler types --env-interface CloudflareEnv"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.3.0",

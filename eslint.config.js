@@ -23,6 +23,7 @@ export default defineConfig(
       '.pi-subagents/**',
       'node_modules/**',
       'content/**',
+      'worker-configuration.d.ts',
     ],
   },
   eslint.configs.recommended,

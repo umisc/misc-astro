@@ -69,9 +69,33 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+  gates:
+    name: Compute build gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      production: ${{ steps.gates.outputs.production }}
+      preview: ${{ steps.gates.outputs.preview }}
+    steps:
+      - name: Compute gates
+        id: gates
+        run: |
+          production=false
+          preview=false
+          if [ "${{ github.event_name }}" = "push" ]; then
+            production=true
+          elif [ "${{ github.event_name }}" = "pull_request" ] \
+            && [ "${{ github.event.pull_request.head.repo.full_name }}" = "${{ github.repository }}" ] \
+            && [ "${{ github.event.pull_request.user.login }}" != "dependabot[bot]" ] \
+            && [ "${{ github.actor }}" != "dependabot[bot]" ]; then
+            preview=true
+          fi
+          echo "production=$production" >> "$GITHUB_OUTPUT"
+          echo "preview=$preview" >> "$GITHUB_OUTPUT"
+
   check-and-build:
     name: Check and build deployment artifact
-    needs: prepare-content
+    needs: [prepare-content, gates]
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -107,51 +131,69 @@ jobs:
       - name: Run checks
         run: pnpm run ci
 
-      - name: Build Cloudflare output
-        run: pnpm build
+      - name: Build production output
+        if: needs.gates.outputs.production == 'true'
+        run: pnpm build:production
 
-      - name: Upload Cloudflare output
-        if: >-
-          github.event_name == 'push' ||
-          (
-            github.event_name == 'pull_request' &&
-            github.event.pull_request.head.repo.full_name == github.repository &&
-            github.event.pull_request.user.login != 'dependabot[bot]' &&
-            github.actor != 'dependabot[bot]'
-          )
+      - name: Upload production output
+        if: needs.gates.outputs.production == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: cloudflare-output-${{ github.run_id }}
+          name: cloudflare-output-prod-${{ github.run_id }}
           path: dist
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 1
 
+      - name: Build preview output
+        if: needs.gates.outputs.preview == 'true'
+        run: pnpm build:preview
+
+      - name: Upload preview output
+        if: needs.gates.outputs.preview == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: cloudflare-output-preview-${{ github.run_id }}
+          path: dist
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Upload migrations
+        if: needs.gates.outputs.production == 'true' || needs.gates.outputs.preview == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: cloudflare-migrations-${{ github.run_id }}
+          path: migrations
+          if-no-files-found: error
+          retention-days: 1
+
   preview:
     name: Preview
-    if: >-
-      github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == 'umisc/misc-astro' &&
-      github.event.pull_request.user.login != 'dependabot[bot]' &&
-      github.actor != 'dependabot[bot]'
-    needs: check-and-build
+    if: needs.gates.outputs.preview == 'true'
+    needs: [check-and-build, gates]
     permissions:
       contents: read
       pull-requests: write # The reusable workflow updates one preview status comment.
-    uses: umisc/misc-astro/.github/workflows/preview.yml@main
+    uses: umisc/misc-astro/.github/workflows/deploy-worker.yml@main
     secrets: inherit
     with:
-      artifact_name: cloudflare-output-${{ github.run_id }}
+      environment: preview
+      artifact_name: cloudflare-output-preview-${{ github.run_id }}
+      migrations_artifact_name: cloudflare-migrations-${{ github.run_id }}
+      preview_alias: pr-${{ github.event.pull_request.number }}
       pr_head_sha: ${{ github.event.pull_request.head.sha }}
       pr_number: ${{ github.event.pull_request.number }}
 
   production:
     name: Production
-    if: github.event_name == 'push'
-    needs: check-and-build
+    if: needs.gates.outputs.production == 'true'
+    needs: [check-and-build, gates]
     permissions:
       contents: read
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-worker.yml
     secrets: inherit
     with:
-      artifact_name: cloudflare-output-${{ github.run_id }}
+      environment: production
+      artifact_name: cloudflare-output-prod-${{ github.run_id }}
+      migrations_artifact_name: cloudflare-migrations-${{ github.run_id }}

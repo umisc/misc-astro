@@ -6,3 +6,4 @@ private-content/
 pnpm-lock.yaml
 
 misc-astro.vercel.app-*.json
+worker-configuration.d.ts
