@@ -23,7 +23,9 @@ export function useScrambledText({
   const [displayText, setDisplayText] = useState(text);
   const [run, setRun] = useState(0);
   const reducedMotionRef = useRef(reducedMotion);
-  reducedMotionRef.current = reducedMotion;
+  useEffect(() => {
+    reducedMotionRef.current = reducedMotion;
+  }, [reducedMotion]);
 
   const start = useCallback(() => {
     if (reducedMotionRef.current) {
@@ -33,9 +35,10 @@ export function useScrambledText({
     setRun((current) => current + 1);
   }, [text]);
 
+  const visibleText = run && !reducedMotion ? displayText : text;
+
   useEffect(() => {
     if (!run || reducedMotion) {
-      setDisplayText(text);
       return;
     }
 
@@ -101,5 +104,5 @@ export function useScrambledText({
     text,
   ]);
 
-  return { displayText, start };
+  return { displayText: visibleText, start };
 }

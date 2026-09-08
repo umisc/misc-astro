@@ -89,7 +89,7 @@ function EventsContent({ events }: Props) {
       .withOptions({ clearOnDefault: false }),
     event: parseAsString,
   });
-  const [query, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [sort, setSort] = useState<SortOption>('date');
   const today = todayDateTimestamp();
   const selected = events.find((item) => item.id === selectedId) ?? null;
@@ -109,7 +109,7 @@ function EventsContent({ events }: Props) {
       .filter((item) =>
         `${item.title} ${item.description}`
           .toLowerCase()
-          .includes(query.toLowerCase()),
+          .includes(searchQuery.toLowerCase()),
       )
       .filter((item) =>
         categoryFilters[sort] ? item.category === categoryFilters[sort] : true,
@@ -119,7 +119,7 @@ function EventsContent({ events }: Props) {
         ? a.title.localeCompare(b.title)
         : eventDateTimestamp(b.dateISO) - eventDateTimestamp(a.dateISO),
     );
-  }, [events, view, query, sort, today]);
+  }, [events, view, searchQuery, sort, today]);
 
   const eventResults = shown.length ? (
     <div className="grid gap-content text-left sm:grid-cols-2 lg:grid-cols-3">
@@ -219,7 +219,7 @@ function EventsContent({ events }: Props) {
               className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted-foreground"
             />
             <Input
-              value={query}
+              value={searchQuery}
               onChange={(event) => {
                 setSearchQuery(event.target.value);
               }}

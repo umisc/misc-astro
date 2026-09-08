@@ -35,8 +35,10 @@ export function useCanvasEffect<T extends CanvasEffectController>({
   const documentVisible = useDocumentVisible();
   const reducedMotionRef = useRef(reducedMotion);
   const documentVisibleRef = useRef(documentVisible);
-  reducedMotionRef.current = reducedMotion;
-  documentVisibleRef.current = documentVisible;
+  useLayoutEffect(() => {
+    reducedMotionRef.current = reducedMotion;
+    documentVisibleRef.current = documentVisible;
+  }, [reducedMotion, documentVisible]);
 
   const canvasRef = useCallback<RefCallback<HTMLCanvasElement>>(
     (canvas) => {

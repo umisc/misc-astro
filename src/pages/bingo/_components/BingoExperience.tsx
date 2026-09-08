@@ -318,6 +318,7 @@ export default function BingoExperience() {
           <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
             {state.board.map((square, index) => (
               <BingoSquare
+                // eslint-disable-next-line @eslint-react/no-array-index-key
                 key={`${index}-${square.prompt}`}
                 index={index}
                 square={square}

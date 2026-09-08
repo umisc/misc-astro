@@ -38,7 +38,7 @@ function AuroraMesh({
   onFirstFrame,
 }: Required<Props> & { onFirstFrame: () => void }) {
   const materialRef = useRef<AuroraMaterial>(null);
-  const hasRendered = useRef(false);
+  const hasRenderedRef = useRef(false);
   const geometry = useMemo(() => {
     const value = new THREE.BufferGeometry();
     value.setAttribute(
@@ -62,8 +62,8 @@ function AuroraMesh({
   useFrame((state) => {
     if (!materialRef.current) return;
     materialRef.current.uniforms.uTime.value = state.clock.elapsedTime * speed;
-    if (!hasRendered.current) {
-      hasRendered.current = true;
+    if (!hasRenderedRef.current) {
+      hasRenderedRef.current = true;
       onFirstFrame();
     }
     materialRef.current.uniforms.uAmplitude.value =

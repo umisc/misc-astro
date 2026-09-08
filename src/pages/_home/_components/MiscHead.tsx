@@ -24,22 +24,22 @@ const HEAD_HEIGHT = 4.636;
 const HEAD_SCALE = 0.995;
 
 function HeadCamera() {
-  const camera = useRef<THREE.OrthographicCamera>(null);
+  const cameraRef = useRef<THREE.OrthographicCamera>(null);
   const { size } = useThree();
 
   useFrame(() => {
-    if (!camera.current) return;
+    if (!cameraRef.current) return;
     const zoom =
       HEAD_SCALE * Math.min(size.width / HEAD_WIDTH, size.height / HEAD_HEIGHT);
-    if (camera.current.zoom !== zoom) {
-      camera.current.zoom = zoom;
-      camera.current.updateProjectionMatrix();
+    if (cameraRef.current.zoom !== zoom) {
+      cameraRef.current.zoom = zoom;
+      cameraRef.current.updateProjectionMatrix();
     }
   });
 
   return (
     <OrthographicCamera
-      ref={camera}
+      ref={cameraRef}
       makeDefault
       position={[0, 0, 10]}
       near={0.1}
@@ -60,52 +60,53 @@ function HeadModel({
   onReady: () => void;
 }) {
   const { scene } = useGLTF('/home/misc-head.glb');
-  const group = useRef<THREE.Group>(null);
-  const cursor = useRef<HTMLDivElement>(null);
-  const fitFrames = useRef(0);
-  const swayWake = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const fitFramesRef = useRef(0);
+  const swayWakeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { invalidate } = useThree();
 
   useFrame((state) => {
-    const fitting = fitFrames.current < 4;
+    const fitting = fitFramesRef.current < 4;
     if (fitting) {
-      fitFrames.current += 1;
-      if (fitFrames.current === 4) onReady();
+      fitFramesRef.current += 1;
+      if (fitFramesRef.current === 4) onReady();
       invalidate();
     }
-    if (!group.current) return;
+    if (!groupRef.current) return;
     const phase = state.clock.elapsedTime % 10;
     const idle = !interacted && !dragging;
     const swayActive = idle && !reducedMotion && phase > 5 && phase < 10;
     const settling =
-      !reducedMotion && Math.abs(group.current.rotation.y) > 0.001;
+      !reducedMotion && Math.abs(groupRef.current.rotation.y) > 0.001;
     const showCursor = !reducedMotion && idle && phase > 5 && phase < 10;
-    if (cursor.current) cursor.current.style.opacity = showCursor ? '1' : '0';
+    if (cursorRef.current)
+      cursorRef.current.style.opacity = showCursor ? '1' : '0';
     const target = swayActive
       ? Math.sin(((phase - 5) / 5) * Math.PI * 2) * SWAY
       : 0;
     if (reducedMotion) {
-      group.current.rotation.y = 0;
+      groupRef.current.rotation.y = 0;
     } else {
-      group.current.rotation.y = THREE.MathUtils.lerp(
-        group.current.rotation.y,
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(
+        groupRef.current.rotation.y,
         target,
         0.1,
       );
     }
 
     if (!idle || reducedMotion) {
-      if (swayWake.current) {
-        clearTimeout(swayWake.current);
-        swayWake.current = null;
+      if (swayWakeRef.current) {
+        clearTimeout(swayWakeRef.current);
+        swayWakeRef.current = null;
       }
     }
     if (fitting || dragging || swayActive || settling) {
       invalidate();
-    } else if (idle && !reducedMotion && !swayWake.current) {
-      swayWake.current = setTimeout(
+    } else if (idle && !reducedMotion && !swayWakeRef.current) {
+      swayWakeRef.current = setTimeout(
         () => {
-          swayWake.current = null;
+          swayWakeRef.current = null;
           invalidate();
         },
         (5 - phase) * 1000,
@@ -114,12 +115,12 @@ function HeadModel({
   });
 
   return (
-    <group ref={group}>
+    <group ref={groupRef}>
       <Center>
         <primitive object={scene} />
       </Center>
       <Html
-        ref={cursor}
+        ref={cursorRef}
         center
         position={[0, 0, 1]}
         style={{

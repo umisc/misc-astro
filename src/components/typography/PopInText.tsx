@@ -16,6 +16,15 @@ export default function PopInText({
 }: Props) {
   const reducedMotion = useReducedMotion();
   const words = text.split(/(\s+)/);
+  // Start offset of each word: stable identity even when words repeat.
+  const wordStarts: number[] = [];
+  {
+    let offset = 0;
+    for (const word of words) {
+      wordStarts.push(offset);
+      offset += word.length;
+    }
+  }
 
   return (
     <span className={className}>
@@ -28,19 +37,17 @@ export default function PopInText({
           visible: { transition: { staggerChildren: delay / 1000 } },
         }}
       >
-        {words.map((word, wordIndex) =>
-          /^\s+$/.test(word) ? (
-            <span key={`${word}-${wordIndex}`} aria-hidden="true">
+        {words.map((word, wordIndex) => {
+          const start = wordStarts[wordIndex] ?? 0;
+          return /^\s+$/.test(word) ? (
+            <span key={start} aria-hidden="true">
               {word}
             </span>
           ) : (
-            <span
-              key={`${word}-${wordIndex}`}
-              className="inline-block whitespace-nowrap"
-            >
+            <span key={start} className="inline-block whitespace-nowrap">
               {Array.from(word).map((character, characterIndex) => (
                 <motion.span
-                  key={`${character}-${characterIndex}`}
+                  key={`${start + characterIndex}-${character}`}
                   className="inline-block before:content-[attr(data-character)]"
                   data-character={character}
                   variants={{
@@ -62,8 +69,8 @@ export default function PopInText({
                 />
               ))}
             </span>
-          ),
-        )}
+          );
+        })}
       </motion.span>
       <span className="sr-only">{text}</span>
     </span>
