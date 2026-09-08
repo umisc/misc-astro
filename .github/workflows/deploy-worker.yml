@@ -77,10 +77,51 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ inputs.migrations_artifact_name }}
-          path: deployment/migrations
+          path: deployment
+
+      - name: Provision ephemeral preview database
+        if: inputs.preview_alias != ''
+        id: preview-db
+        shell: bash
+        run: |
+          db_name="misc-astro-pr-${{ inputs.pr_number }}"
+          echo "name=$db_name" >> "$GITHUB_OUTPUT"
+          existing_id="$(${{ steps.wrangler.outputs.wrangler }} d1 list --json | jq -r --arg name "$db_name" '.[] | select(.name == $name) | (.uuid // .database_id // empty)')"
+          if [ -n "$existing_id" ]; then
+            echo "Reusing existing preview database $db_name ($existing_id)."
+            echo "database_id=$existing_id" >> "$GITHUB_OUTPUT"
+          else
+            ${{ steps.wrangler.outputs.wrangler }} d1 create "$db_name"
+            new_id="$(${{ steps.wrangler.outputs.wrangler }} d1 list --json | jq -r --arg name "$db_name" '.[] | select(.name == $name) | (.uuid // .database_id // empty)')"
+            if [ -z "$new_id" ]; then
+              echo "Failed to resolve database_id for newly created $db_name." >&2
+              exit 1
+            fi
+            echo "database_id=$new_id" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Apply D1 migrations
+        if: inputs.preview_alias == ''
         run: ${{ steps.wrangler.outputs.wrangler }} d1 migrations apply DB --remote --config deployment/dist/server/wrangler.json
+
+      - name: Apply D1 migrations to ephemeral preview database
+        if: inputs.preview_alias != ''
+        working-directory: deployment
+        run: ${{ steps.wrangler.outputs.wrangler }} d1 migrations apply ${{ steps.preview-db.outputs.name }} --remote
+
+      - name: Seed ephemeral preview database
+        if: inputs.preview_alias != ''
+        working-directory: deployment
+        run: ${{ steps.wrangler.outputs.wrangler }} d1 execute ${{ steps.preview-db.outputs.name }} --remote --yes --file=db/seed.preview.sql
+
+      - name: Point preview config at ephemeral database
+        if: inputs.preview_alias != ''
+        shell: bash
+        run: |
+          jq --arg id '${{ steps.preview-db.outputs.database_id }}' --arg name '${{ steps.preview-db.outputs.name }}' \
+            '(.d1_databases[] | select(.binding == "DB") | .database_id) = $id
+              | (.d1_databases[] | select(.binding == "DB") | .database_name) = $name' \
+            deployment/dist/server/wrangler.json > deployment/dist/server/wrangler.pr.json
 
       - name: Deploy to production
         if: inputs.preview_alias == ''
@@ -90,7 +131,7 @@ jobs:
         if: inputs.preview_alias != ''
         env:
           WRANGLER_OUTPUT_FILE_PATH: deployment/wrangler-output.ndjson
-        run: ${{ steps.wrangler.outputs.wrangler }} versions upload --config deployment/dist/server/wrangler.json --preview-alias ${{ inputs.preview_alias }}
+        run: ${{ steps.wrangler.outputs.wrangler }} versions upload --config deployment/dist/server/wrangler.pr.json --preview-alias ${{ inputs.preview_alias }}
 
       - name: Read preview URL
         if: inputs.preview_alias != ''

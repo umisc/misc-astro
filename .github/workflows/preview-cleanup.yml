@@ -1,0 +1,61 @@
+name: Delete ephemeral preview database
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number whose ephemeral database should be deleted
+        required: true
+        type: number
+
+permissions:
+  contents: read
+
+# Never cancel a delete: an orphaned database is worse than a slow one.
+concurrency:
+  group: preview-db-cleanup-pr-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Delete ephemeral preview database
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: preview
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - name: Checkout trusted workflow actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: umisc/misc-astro
+          ref: main
+          path: trusted-workflow
+          sparse-checkout: |
+            .github/actions/setup-wrangler
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Set up trusted Wrangler
+        id: wrangler
+        uses: ./trusted-workflow/.github/actions/setup-wrangler
+
+      - name: Delete ephemeral preview database if it exists
+        shell: bash
+        run: |
+          pr_number="${{ github.event.pull_request.number || inputs.pr_number }}"
+          db_name="misc-astro-pr-$pr_number"
+          existing_id="$(${{ steps.wrangler.outputs.wrangler }} d1 list --json | jq -r --arg name "$db_name" '.[] | select(.name == $name) | (.uuid // .database_id // empty)')"
+          if [ -z "$existing_id" ]; then
+            echo "No database named $db_name; nothing to delete."
+            exit 0
+          fi
+          ${{ steps.wrangler.outputs.wrangler }} d1 delete "$db_name" --skip-confirmation

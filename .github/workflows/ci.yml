@@ -159,12 +159,22 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+      - name: Stage database artifacts
+        if: needs.gates.outputs.production == 'true' || needs.gates.outputs.preview == 'true'
+        shell: bash
+        run: |
+          rm -rf db-artifacts
+          mkdir -p db-artifacts
+          cp -r migrations db-artifacts/migrations
+          mkdir -p db-artifacts/db
+          cp db/seed.preview.sql db-artifacts/db/seed.preview.sql
+
       - name: Upload migrations
         if: needs.gates.outputs.production == 'true' || needs.gates.outputs.preview == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: cloudflare-migrations-${{ github.run_id }}
-          path: migrations
+          path: db-artifacts
           if-no-files-found: error
           retention-days: 1
 
