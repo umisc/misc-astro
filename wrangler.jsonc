@@ -18,6 +18,7 @@
   ],
   "env": {
     "production": {
+      "name": "misc-astro",
       "d1_databases": [
         {
           "binding": "DB",
