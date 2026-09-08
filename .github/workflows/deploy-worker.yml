@@ -113,6 +113,8 @@ jobs:
         if: inputs.preview_alias == ''
         run: ${{ steps.wrangler.outputs.wrangler }} deploy --config deployment/dist/server/wrangler.json
 
+      # Versions cannot create a worker: misc-astro-production must have been
+      # deployed once (push-to-main production job) before any preview upload.
       - name: Upload preview version
         if: inputs.preview_alias != ''
         env:
