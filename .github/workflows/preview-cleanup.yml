@@ -1,0 +1,49 @@
+name: Delete ephemeral preview database
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number whose ephemeral database should be deleted
+        required: true
+        type: number
+
+permissions:
+  contents: read
+
+# Never cancel a delete: an orphaned database is worse than a slow one.
+# Exactly one of the two interpolations below is non-empty per trigger type
+# (pull_request events have no inputs context and vice versa), so concatenation
+# selects the PR number without relying on || operand semantics.
+concurrency:
+  group: preview-db-cleanup-pr-${{ github.event.pull_request.number }}${{ inputs.pr_number }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Delete ephemeral preview database
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: preview
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - name: Set up trusted Wrangler
+        id: wrangler
+        uses: umisc/misc-astro/.github/actions/setup-wrangler@main
+
+      - name: Delete ephemeral preview database
+        uses: umisc/misc-astro/.github/actions/preview-db@main
+        with:
+          wrangler: ${{ steps.wrangler.outputs.wrangler }}
+          operation: delete
+          # See concurrency group comment: exactly one side is non-empty.
+          pr_number: ${{ github.event.pull_request.number }}${{ inputs.pr_number }}
