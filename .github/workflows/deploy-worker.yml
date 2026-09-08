@@ -52,20 +52,9 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
     steps:
-      - name: Checkout trusted workflow actions
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: umisc/misc-astro
-          ref: main
-          path: trusted-workflow
-          sparse-checkout: |
-            .github/actions/setup-wrangler
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-
       - name: Set up trusted Wrangler
         id: wrangler
-        uses: ./trusted-workflow/.github/actions/setup-wrangler
+        uses: umisc/misc-astro/.github/actions/setup-wrangler@main
 
       - name: Download prebuilt output
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -82,23 +71,11 @@ jobs:
       - name: Provision ephemeral preview database
         if: inputs.preview_alias != ''
         id: preview-db
-        shell: bash
-        run: |
-          db_name="misc-astro-pr-${{ inputs.pr_number }}"
-          echo "name=$db_name" >> "$GITHUB_OUTPUT"
-          existing_id="$(${{ steps.wrangler.outputs.wrangler }} d1 list --json | jq -r --arg name "$db_name" '.[] | select(.name == $name) | (.uuid // .database_id // empty)')"
-          if [ -n "$existing_id" ]; then
-            echo "Reusing existing preview database $db_name ($existing_id)."
-            echo "database_id=$existing_id" >> "$GITHUB_OUTPUT"
-          else
-            ${{ steps.wrangler.outputs.wrangler }} d1 create "$db_name"
-            new_id="$(${{ steps.wrangler.outputs.wrangler }} d1 list --json | jq -r --arg name "$db_name" '.[] | select(.name == $name) | (.uuid // .database_id // empty)')"
-            if [ -z "$new_id" ]; then
-              echo "Failed to resolve database_id for newly created $db_name." >&2
-              exit 1
-            fi
-            echo "database_id=$new_id" >> "$GITHUB_OUTPUT"
-          fi
+        uses: umisc/misc-astro/.github/actions/preview-db@main
+        with:
+          wrangler: ${{ steps.wrangler.outputs.wrangler }}
+          operation: provision
+          pr_number: ${{ inputs.pr_number }}
 
       - name: Apply D1 migrations
         if: inputs.preview_alias == ''
@@ -122,6 +99,15 @@ jobs:
             '(.d1_databases[] | select(.binding == "DB") | .database_id) = $id
               | (.d1_databases[] | select(.binding == "DB") | .database_name) = $name' \
             deployment/dist/server/wrangler.json > deployment/dist/server/wrangler.pr.json
+
+      - name: Verify preview config points at ephemeral database
+        if: inputs.preview_alias != ''
+        shell: bash
+        run: |
+          jq -e --arg id '${{ steps.preview-db.outputs.database_id }}' \
+            '(.d1_databases | map(select(.binding == "DB"))) as $dbs
+              | ($dbs | length == 1) and ($dbs[0].database_id == $id)' \
+            deployment/dist/server/wrangler.pr.json > /dev/null
 
       - name: Deploy to production
         if: inputs.preview_alias == ''

@@ -1,0 +1,64 @@
+name: Manage ephemeral preview database
+description: >-
+  Finds, provisions, or deletes the per-PR D1 database
+  (misc-astro-pr-<pr-number>).
+
+inputs:
+  wrangler:
+    description: Absolute path to the Wrangler binary
+    required: true
+  operation:
+    description: provision (find or create) or delete
+    required: true
+  pr_number:
+    description: Pull request number the database belongs to
+    required: true
+
+outputs:
+  name:
+    description: Database name
+    value: ${{ steps.db.outputs.name }}
+  database_id:
+    description: Database UUID (empty when delete found nothing)
+    value: ${{ steps.db.outputs.database_id }}
+
+runs:
+  using: composite
+  steps:
+    - name: Provision or delete ephemeral preview database
+      id: db
+      shell: bash
+      run: |
+        db_name="misc-astro-pr-${{ inputs.pr_number }}"
+        echo "name=$db_name" >> "$GITHUB_OUTPUT"
+        lookup() {
+          "${{ inputs.wrangler }}" d1 list --json | jq -r --arg name "$db_name" '.[] | select(.name == $name) | (.uuid // .database_id // empty)'
+        }
+        existing_id="$(lookup)"
+        case "${{ inputs.operation }}" in
+          provision)
+            if [ -n "$existing_id" ]; then
+              echo "Reusing existing preview database $db_name ($existing_id)."
+              echo "database_id=$existing_id" >> "$GITHUB_OUTPUT"
+            else
+              "${{ inputs.wrangler }}" d1 create "$db_name"
+              new_id="$(lookup)"
+              if [ -z "$new_id" ]; then
+                echo "Failed to resolve database_id for newly created $db_name." >&2
+                exit 1
+              fi
+              echo "database_id=$new_id" >> "$GITHUB_OUTPUT"
+            fi
+            ;;
+          delete)
+            if [ -z "$existing_id" ]; then
+              echo "No database named $db_name; nothing to delete."
+            else
+              "${{ inputs.wrangler }}" d1 delete "$db_name" --skip-confirmation
+            fi
+            ;;
+          *)
+            echo "Unknown operation: ${{ inputs.operation }} (expected provision or delete)." >&2
+            exit 1
+            ;;
+        esac

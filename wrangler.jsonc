@@ -18,31 +18,11 @@
   ],
   "env": {
     "production": {
-      "name": "misc-astro",
-      "workers_dev": true,
-      "preview_urls": true,
-      "observability": {
-        "enabled": true,
-      },
       "d1_databases": [
         {
           "binding": "DB",
           "database_name": "prod",
           "database_id": "b25b8194-abe3-4282-9ef7-7b02d0bbdac4",
-        },
-      ],
-    },
-    "preview": {
-      "workers_dev": true,
-      "preview_urls": true,
-      "observability": {
-        "enabled": true,
-      },
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "preview",
-          "database_id": "58d5ee1a-2b25-4086-9372-3dc526a4b892",
         },
       ],
     },

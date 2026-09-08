@@ -131,29 +131,15 @@ jobs:
       - name: Run checks
         run: pnpm run ci
 
-      - name: Build production output
-        if: needs.gates.outputs.production == 'true'
-        run: pnpm build:production
+      - name: Build deployment output
+        if: needs.gates.outputs.production == 'true' || needs.gates.outputs.preview == 'true'
+        run: pnpm build:deploy
 
-      - name: Upload production output
-        if: needs.gates.outputs.production == 'true'
+      - name: Upload deployment output
+        if: needs.gates.outputs.production == 'true' || needs.gates.outputs.preview == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: cloudflare-output-prod-${{ github.run_id }}
-          path: dist
-          include-hidden-files: true
-          if-no-files-found: error
-          retention-days: 1
-
-      - name: Build preview output
-        if: needs.gates.outputs.preview == 'true'
-        run: pnpm build:preview
-
-      - name: Upload preview output
-        if: needs.gates.outputs.preview == 'true'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: cloudflare-output-preview-${{ github.run_id }}
+          name: cloudflare-output-${{ github.run_id }}
           path: dist
           include-hidden-files: true
           if-no-files-found: error
@@ -189,7 +175,7 @@ jobs:
     secrets: inherit
     with:
       environment: preview
-      artifact_name: cloudflare-output-preview-${{ github.run_id }}
+      artifact_name: cloudflare-output-${{ github.run_id }}
       migrations_artifact_name: cloudflare-migrations-${{ github.run_id }}
       preview_alias: pr-${{ github.event.pull_request.number }}
       pr_head_sha: ${{ github.event.pull_request.head.sha }}
@@ -206,5 +192,5 @@ jobs:
     secrets: inherit
     with:
       environment: production
-      artifact_name: cloudflare-output-prod-${{ github.run_id }}
+      artifact_name: cloudflare-output-${{ github.run_id }}
       migrations_artifact_name: cloudflare-migrations-${{ github.run_id }}

@@ -16,8 +16,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "build:preview": "CLOUDFLARE_ENV=preview astro build",
-    "build:production": "CLOUDFLARE_ENV=production astro build",
+    "build:deploy": "CLOUDFLARE_ENV=production astro build",
     "preview": "astro preview",
     "astro": "astro",
     "event:add": "node scripts/add-event.mjs",
