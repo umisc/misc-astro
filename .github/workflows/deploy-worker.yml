@@ -89,11 +89,6 @@ jobs:
             '(.d1_databases[] | select(.binding == "DB") | .database_id) = $id
               | (.d1_databases[] | select(.binding == "DB") | .database_name) = $name' \
             deployment/dist/server/wrangler.json > deployment/dist/server/wrangler.pr.json
-
-      - name: Verify preview config points at ephemeral database
-        if: inputs.preview_alias != ''
-        shell: bash
-        run: |
           jq -e --arg id '${{ steps.preview-db.outputs.database_id }}' \
             '(.d1_databases | map(select(.binding == "DB"))) as $dbs
               | ($dbs | length == 1) and ($dbs[0].database_id == $id)' \
