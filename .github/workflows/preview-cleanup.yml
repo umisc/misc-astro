@@ -16,10 +16,6 @@ on:
 permissions:
   contents: read
 
-# Never cancel a delete: an orphaned database is worse than a slow one.
-# Exactly one of the two interpolations below is non-empty per trigger type
-# (pull_request events have no inputs context and vice versa), so concatenation
-# selects the PR number without relying on || operand semantics.
 concurrency:
   group: preview-db-cleanup-pr-${{ github.event.pull_request.number }}${{ inputs.pr_number }}
   cancel-in-progress: false
@@ -45,5 +41,4 @@ jobs:
         with:
           wrangler: ${{ steps.wrangler.outputs.wrangler }}
           operation: delete
-          # See concurrency group comment: exactly one side is non-empty.
           pr_number: ${{ github.event.pull_request.number }}${{ inputs.pr_number }}
