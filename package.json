@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "pnpm db:setup:local && astro dev",
     "build": "astro build",
     "build:deploy": "CLOUDFLARE_ENV=production astro build",
     "preview": "astro preview",
@@ -24,6 +24,9 @@
     "check": "astro check && eslint . --max-warnings 0 && prettier --check .",
     "ci": "pnpm check",
     "db:migrate:local": "wrangler d1 migrations apply misc-astro-dev --local",
+    "db:seed:local": "wrangler d1 execute misc-astro-dev --local --yes --file=db/seed.preview.sql",
+    "db:setup:local": "wrangler d1 migrations apply misc-astro-dev --local && wrangler d1 execute misc-astro-dev --local --yes --file=db/seed.preview.sql",
+    "db:reset:local": "rm -rf .wrangler/state/v3/d1 && pnpm db:setup:local",
     "db:execute:local": "wrangler d1 execute misc-astro-dev --local",
     "cf:types": "wrangler types --env-interface CloudflareEnv"
   },
