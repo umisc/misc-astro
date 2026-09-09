@@ -33,6 +33,14 @@ pnpm install
 pnpm dev
 ```
 
+`pnpm dev` first applies D1 migrations and seeds the local database
+(`pnpm db:setup:local`), so a fresh clone gets a working local DB with no
+extra steps. If local state gets stale, reset it with:
+
+```sh
+pnpm db:reset:local
+```
+
 ### Making Changes
 
 > If you forgot to `--recurse-submodules` when cloning, run these two commands:
