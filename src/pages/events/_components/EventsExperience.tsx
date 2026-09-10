@@ -276,7 +276,7 @@ function EventsContent({ events }: Props) {
               width={selected.image.width}
               height={selected.image.height}
               decoding="async"
-              className="h-64 w-full rounded-lg object-cover sm:h-96"
+              className="h-auto w-full rounded-lg"
             />
             <div className="flex justify-between gap-cluster text-sm">
               <Badge>{selected.category}</Badge>
