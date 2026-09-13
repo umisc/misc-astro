@@ -62,7 +62,7 @@
     "@eslint-react/eslint-plugin": "^5.19.0",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/typography": "^0.5.20",
-    "@types/node": "^26.5.0",
+    "@types/node": "^26.5.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@types/three": "^0.185.4",
@@ -77,6 +77,6 @@
     "tailwind-lint": "^0.12.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0",
-    "wrangler": "4.129.1"
+    "wrangler": "4.131.0"
   }
 }
