@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.umisc.club/sitemap-index.xml
+Sitemap: https://umisc.org.au/sitemap-index.xml
