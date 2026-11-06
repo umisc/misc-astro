@@ -31,14 +31,11 @@ const fallbackImage = {
   role="img"
   aria-label="Interactive 3D MISC head"
 >
-  <div
-    class="absolute top-1/2 left-1/2 aspect-(--head-canvas-aspect) w-full -translate-x-1/2 -translate-y-1/2 lg:w-[calc(100%/var(--head-visible-ratio))]"
-  >
+  <div class="absolute top-1/2 left-1/2 aspect-(--head-canvas-aspect) w-full -translate-x-1/2 -translate-y-1/2 lg:w-[calc(100%/var(--head-visible-ratio))]">
     <div
       aria-hidden="true"
       class="pointer-events-none absolute inset-[12%] z-0 rounded-full bg-radial-[at_55%_45%] from-primary/30 via-emerald-500/10 via-55% to-transparent blur-3xl"
-    >
-    </div>
+    ></div>
 
     <div class="absolute inset-0 z-10">
       <MiscHead fallbackImage={fallbackImage} client:load />

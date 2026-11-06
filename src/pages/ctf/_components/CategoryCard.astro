@@ -27,7 +27,9 @@ const { href, title, description, tags } = Astro.props;
       {description}
     </CardDescription>
     <div class="flex flex-wrap gap-2">
-      {tags.map((tag) => <Badge variant="outline">{tag}</Badge>)}
+      {tags.map((tag) => (
+        <Badge variant="outline">{tag}</Badge>
+      ))}
     </div>
   </CardContent>
 </Card>

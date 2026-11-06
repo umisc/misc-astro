@@ -78,16 +78,14 @@ const guides = (await getCollection('ctf')).sort(
         Challenge Categories
       </h2>
       <div class="grid gap-content sm:grid-cols-2 lg:grid-cols-3">
-        {
-          guides.map(({ id, data }) => (
-            <CategoryCard
-              href={`/ctf/${id}/`}
-              title={data.title}
-              description={data.description}
-              tags={data.tags}
-            />
-          ))
-        }
+        {guides.map(({ id, data }) => (
+          <CategoryCard
+            href={`/ctf/${id}/`}
+            title={data.title}
+            description={data.description}
+            tags={data.tags}
+          />
+        ))}
       </div>
     </section>
 

@@ -20,13 +20,11 @@ const sponsorshipEmail = 'mailto:melb.info.sec.club@gmail.com?subject=&body=';
 
 <section class="relative overflow-hidden text-slate-200">
   <div class="flex flex-col gap-section-content">
-    {
-      tiers.map((tier) =>
-        grouped[tier].length ? (
-          <SponsorTier name={tier} sponsors={grouped[tier]} />
-        ) : null,
-      )
-    }
+    {tiers.map((tier) =>
+      grouped[tier].length ? (
+        <SponsorTier name={tier} sponsors={grouped[tier]} />
+      ) : null,
+    )}
     <div class="flex justify-center">
       <Button client:load href={sponsorshipEmail} size="lg" variant="matrix">
         Be a sponsor

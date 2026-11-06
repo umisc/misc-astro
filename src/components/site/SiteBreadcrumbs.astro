@@ -68,21 +68,19 @@ const breadcrumbSchema = {
 />
 <Breadcrumb className={cn('pl-1', className)}>
   <BreadcrumbList className="gap-1.5">
-    {
-      linkedItems.map((item) => (
-        <>
-          <BreadcrumbItem>
-            <BreadcrumbLink
-              href={item.href}
-              className="rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
-            >
-              {item.label}
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator className="text-muted-foreground" />
-        </>
-      ))
-    }
+    {linkedItems.map((item) => (
+      <>
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            href={item.href}
+            className="rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
+          >
+            {item.label}
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator className="text-muted-foreground" />
+      </>
+    ))}
     <BreadcrumbItem className="min-w-0">
       <BreadcrumbPage className="wrap-break-word text-primary">
         {currentPage.label}
