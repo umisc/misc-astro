@@ -84,36 +84,35 @@ const headingId = `${name.toLowerCase()}-sponsors-heading`;
         d="M0 0L18 40Q21 47 30 47H290Q299 47 302 40L320 0"
         fill="none"
         vector-effect="non-scaling-stroke"
-        class={style.stroke}></path>
+        class={style.stroke}
+      ></path>
     </svg>
     <span class="relative z-10 whitespace-nowrap">{style.label}</span>
   </h2>
 
-  {
-    name === 'Community' ? (
-      <CommunityPartnersTicker client:load sponsors={sponsors} />
-    ) : (
-      <ul class={`grid items-stretch gap-cluster sm:gap-content ${style.grid}`}>
-        {sponsors.map((sponsor) => (
-          <li class="min-w-0">
-            <a
-              href={sponsor.href}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Visit ${sponsor.name}`}
-              class="group flex h-32 w-full items-center justify-center rounded-xl p-content transition-colors duration-200 outline-none hover:bg-background/55 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
-            >
-              <SponsorGlitchLogo
-                src={sponsor.logo.src}
-                alt={sponsor.name}
-                width={sponsor.logo.width}
-                height={sponsor.logo.height}
-              />
-              <span class="sr-only">{sponsor.name}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    )
-  }
+  {name === 'Community' ? (
+    <CommunityPartnersTicker client:load sponsors={sponsors} />
+  ) : (
+    <ul class={`grid items-stretch gap-cluster sm:gap-content ${style.grid}`}>
+      {sponsors.map((sponsor) => (
+        <li class="min-w-0">
+          <a
+            href={sponsor.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Visit ${sponsor.name}`}
+            class="group flex h-32 w-full items-center justify-center rounded-xl p-content transition-colors duration-200 outline-none hover:bg-background/55 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+          >
+            <SponsorGlitchLogo
+              src={sponsor.logo.src}
+              alt={sponsor.name}
+              width={sponsor.logo.width}
+              height={sponsor.logo.height}
+            />
+            <span class="sr-only">{sponsor.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
 </section>

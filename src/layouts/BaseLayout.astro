@@ -95,20 +95,16 @@ const organisationSchema = {
       sizes="16x16 32x32 48x48"
     />
     <title>{title}</title>
-    {
-      includeOrganizationSchema && (
-        <script
-          is:inline
-          type="application/ld+json"
-          set:html={JSON.stringify(organisationSchema)}
-        />
-      )
-    }
+    {includeOrganizationSchema && (
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={JSON.stringify(organisationSchema)}
+      />
+    )}
     <ClientRouter />
   </head>
-  <body
-    class="isolate flex min-h-dvh flex-col overflow-x-clip bg-transparent font-sans antialiased"
-  >
+  <body class="isolate flex min-h-dvh flex-col overflow-x-clip bg-transparent font-sans antialiased">
     <AuroraBackground />
     <SiteHeader />
     <main class="relative z-10 flex-1 pb-page-block">
