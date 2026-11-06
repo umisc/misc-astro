@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.umisc.club',
+  site: 'https://umisc.org.au',
   session: false,
   trailingSlash: 'always',
   vite: {
