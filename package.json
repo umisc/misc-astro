@@ -59,24 +59,24 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
-    "@eslint-react/eslint-plugin": "^5.28.8",
+    "@eslint-react/eslint-plugin": "^5.30.2",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.186.0",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "eslint-plugin-astro": "^3.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-tailwindcss": "^4.4.0",
-    "globals": "^17.13.0",
-    "prettier": "^3.9.10",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
     "prettier-plugin-astro": "^1.1.2",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "tailwind-lint": "^0.16.0",
+    "tailwind-lint": "^0.17.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.1",
-    "wrangler": "4.156.0"
+    "typescript-eslint": "^8.72.2",
+    "wrangler": "4.161.0"
   }
 }
